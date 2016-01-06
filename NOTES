@@ -1,0 +1,8 @@
+Notes on implementation details, in no specific order:
+
+The program will only support using one profile/account/file at a time.
+It is made to be a simple, quick and easy way to track your money and view your transaction history.
+I use the term "Profile" to denote a single person's finances.
+Transactions are not separated by account type (cash, credit, etc...). All transactions belong to one large
+list. Type is/will be distinguished by an attribute in the transaction data structure.
+I don't know how to program well, don't judge me.

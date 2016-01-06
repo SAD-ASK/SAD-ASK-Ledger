@@ -3,9 +3,14 @@
 #include <string>
 #include <vector>
 
+// Program info
+namespace PROGRAM {
+const std::string NAME          ("SAD-ASK-Ledger");
+const std::string VERSION       ("0.0.1");
+}
+
+
 /* Transaction data type
- * As of now I believe it should be a POD as an "account" will be the class
- * that offers functions to operate on them
  * See TODO for ideas regarding more information to be implemented for each transaction
  */
 struct Transaction {
@@ -13,31 +18,48 @@ struct Transaction {
     float amount = 0;
 };
 
-// Global transaction list
-// Support for multiple "accounts" wrapped in a class to be added later
 
-std::vector<Transaction> transList;
+// Profile class
+class Profile {
+public:
+    Profile();
 
-// Transaction functions
-/* void addTransaction
- * Adds a transaction to the vector
- * Will be extended as the transaction struct supports more info
- * Will possibly return transaction value for dynamic prompt later?
+    /* void addTransaction
+     * Adds a transaction to the vector
+     */
+    void addTransaction(std::string description, float amount);
+
+
+    // void printTransactionList
+    /* prints all the transactions currently stored
+     * formatting is a necessity and filters will be added later? most likely in a separate function
+     * FIX: Avoid initializing struct just to add values to vector
+     */
+    void printTransactionList();
+private:
+    std::string _profileName;
+    std::vector<Transaction> _transList;
+    float _balance;
+};
+
+/* Old global transaction list
+ * std::vector<Transaction> transList;
  */
-void addTransaction(std::string description, float amount);
 
-// void printTransactionList
-/* prints all the transactions currently stored
- * formatting is a necessity and filters will be added later? most likely in a separate function
- * FIX: Avoid initializing struct just to add values to vector
+
+// std::string chooseProfile
+/* Prompts user for Profile name and returns it
+ * Very simple method of getting Profile name, does not handle file IO
+ * Note: Profile name is used for filename and class object name!
  */
-void printTransactionList();
+std::string chooseProfile();
+
 
 // bool menuLoop
-/* Starts the main program loop
- * Uses a loopcounter to display a welcome message on first iteration (replace with bool?)
+/* Starts the main loop after an account has been chosen
+ * Accepts reference to active profile object
  */
-bool menuLoop(int loopCounter);
+bool menuLoop(Profile *currentProfile);
 
 #endif // LEDGER_H
 

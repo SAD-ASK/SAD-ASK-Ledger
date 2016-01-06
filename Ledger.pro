@@ -10,5 +10,6 @@ HEADERS += \
     ledger.h
 
 DISTFILES += \
-    TODO
+    TODO \
+    NOTES
 
