@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include "ledger.h"
+<<<<<<< HEAD
 #include <string.h>
 //void addTransaction(std::string description, float amount) {
 //    Transaction t;
@@ -11,6 +12,10 @@
 //}
 
 
+=======
+
+// Never to see the light of day...
+>>>>>>> 25e0da81948c91dda0cec778b44eb908d184a1fa
 Profile::Profile() :
   _profileName("Default"),
   _transList(),
@@ -18,8 +23,11 @@ Profile::Profile() :
 {}
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 25e0da81948c91dda0cec778b44eb908d184a1fa
 void Profile::addTransaction(std::string description, float amount) {
   Transaction t;
   t.description = description;
@@ -30,21 +38,34 @@ void Profile::addTransaction(std::string description, float amount) {
 
 
 void Profile::printTransactionList() {
+
+    const int width1 = 30; // subject to change
+    const int width2 = 19;
+
+    // Set decimal settings for output
+    std::cout << std::fixed << std::showpoint << std::setprecision(2);
+
+
+    // Heading
+    // First column (first pipe to second pipe) is 30 characters
+    // Second column is 19 characters
+    std::cout << "| " << std::left  << std::setw(width1 - 2) << "Description"
+              << "| " << std::right << std::setw(width2 - 2) << "Amount"      << "|"
+              << std::endl;
+    std::cout << "|" << std::string(29, '-') << "|" << std::string(18, '-') << "|" << std::endl;
+
     for (auto &i : this->_transList) {
-        std::cout << i.description << i.amount << std::endl;
+        std::cout << "| " << std::left     << std::setw(width1 - 2) << i.description
+                  << "| " << std::setw(17) << std::right            << i.amount << "|"
+                  << std::endl;
     }
 }
-
-//// Formatting work in progress
-////    std::cout << "------------------------------------------------" << endl;
-////    std::cout << "|     Desc     |                      | Amount |" << endl;
-////    std::cout << "|-----------------------------------------------" << endl;
 
 
 std::string chooseProfile() {
     std::string profileName;
-    std::cout << "Welcome to " << PROGRAM::NAME << std::endl
-              << "Version: " << PROGRAM::VERSION << std::endl;
+    std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
+              << "Version: "   << PROGRAM::VERSION << std::endl;
 
     std::cout << "Please enter the profile name you wish to use" << std::endl
               << "(if entered profile name does not exist, you will be prompted to create it)" << std::endl
@@ -61,9 +82,15 @@ bool menuLoop(Profile &currentProfile) {
   bool innerFlag = true;
   do{
     std::cout << "Please make a selection" << std::endl
+<<<<<<< HEAD
 	      << "A: Add a transaction" << std::endl
 	      << "B: View transaction list" << std::endl
 	      << "C: Quit the program" << std::endl;
+=======
+              << "A: Add a transaction" << std::endl
+              << "L: View transaction list" << std::endl
+              << "Q: Quit the program" << std::endl;
+>>>>>>> 25e0da81948c91dda0cec778b44eb908d184a1fa
     std::cout << "Selection: ";
     std::cin >> selection;
     std::cin.ignore();
@@ -85,12 +112,22 @@ bool menuLoop(Profile &currentProfile) {
     break;
   }
 
+<<<<<<< HEAD
   case 'B' :
   case 'b' :
     currentProfile.printTransactionList();
     break;
   case 'C' :
   case 'c' :
+=======
+    case 'L' :
+    case 'l' :
+        currentProfile.printTransactionList();
+        break;
+    case 'Q' :
+    case 'q' :
+        return false;
+>>>>>>> 25e0da81948c91dda0cec778b44eb908d184a1fa
 
     return false;
 
