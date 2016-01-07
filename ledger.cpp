@@ -27,8 +27,18 @@ void Profile::addTransaction(std::string description, float amount) {
 
 
 void Profile::printTransactionList() {
+
+    // Heading
+    std::cout << "| " << std::left  << std::setw(28) << "Description"
+              << "| " << std::right << std::setw(7)  << "Amount"      << "|"
+              << std::endl;
+    std::cout << "|" << std::string(29, '-') << "|" << std::string(8, '-') << "|" << std::endl;
+
     for (auto &i : this->_transList) {
-        std::cout << i.description << i.amount << std::endl;
+        std::cout << std::setprecision(2) << std::setfill(' ')
+                  << "| " << std::left    << std::setw(28) << i.description
+                  << "| " << std::setw(7) << std::right    << i.amount << "|"
+                  << std::endl;
     }
 }
 

@@ -11,7 +11,6 @@ const std::string VERSION       ("0.0.1");
 
 
 /* Transaction data type
- * See TODO for ideas regarding more information to be implemented for each transaction
  */
 struct Transaction {
     std::string description = "Transaction";
