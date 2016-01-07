@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include "ledger.h"
-
+#include <string.h>
 //void addTransaction(std::string description, float amount) {
 //    Transaction t;
 //    t.description = description;
@@ -12,17 +12,20 @@
 
 
 Profile::Profile() :
-    _profileName("Default"),
-    _transList(),
-    _balance(0)
+  _profileName("Default"),
+  _transList(),
+  _balance(0)
 {}
 
+
+
+
 void Profile::addTransaction(std::string description, float amount) {
-    Transaction t;
-    t.description = description;
-    t.amount = amount;
-    this->_transList.push_back(t);
-    this->_balance += amount;
+  Transaction t;
+  t.description = description;
+  t.amount = amount;
+  this->_transList.push_back(t);
+  this->_balance += amount;
 }
 
 
@@ -52,58 +55,65 @@ std::string chooseProfile() {
     return profileName;
 }
 
+
 bool menuLoop(Profile &currentProfile) {
-
-    char selection;
-
+  char selection;
+  bool innerFlag = true;
+  do{
     std::cout << "Please make a selection" << std::endl
-              << "A: Add a transaction" << std::endl
-              << "B: View transaction list" << std::endl
-              << "C: Quit the program" << std::endl;
+	      << "A: Add a transaction" << std::endl
+	      << "B: View transaction list" << std::endl
+	      << "C: Quit the program" << std::endl;
     std::cout << "Selection: ";
     std::cin >> selection;
     std::cin.ignore();
+  }while(strlen(&selection)>1 && !innerFlag);
 
-    switch (selection) {
-    case 'A' :
-    case 'a' : {
-        std::string description;
-        float amount;
+  switch (selection) {
+  case 'A' :
+  case 'a' : {
+    std::string description;
+    float amount;
 
-        std::cout << "What do you want to call the transaction?" << std::endl << ": ";
-        getline(std::cin, description);
+    std::cout << "What do you want to call the transaction?" << std::endl << ": ";
+    getline(std::cin, description);
 
-        std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl << ": ";
-        std::cin >> amount;
+    std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl << ": ";
+    std::cin >> amount;
 
-        currentProfile.addTransaction(description, amount);
-        break;
-    }
+    currentProfile.addTransaction(description, amount);
+    break;
+  }
 
-    case 'B' :
-    case 'b' :
-        currentProfile.printTransactionList();
-        break;
-    case 'C' :
-    case 'c' :
-        return false;
+  case 'B' :
+  case 'b' :
+    currentProfile.printTransactionList();
+    break;
+  case 'C' :
+  case 'c' :
 
-    default:
-        return true;
-    }
-    return true;
+    return false;
+
+  default: innerFlag = false;
+    return true ;
+  }
+  return true;
 }
+
+
 
 int main( ) {
 
-    // Choose account
-    std::string profileName = chooseProfile();
-    Profile currentProfile;
-    bool isDone = true;
+  // Choose account
+  std::string profileName = chooseProfile();
+  Profile currentProfile;
+  bool isDone = true;
 
-    do {
-        isDone = menuLoop(currentProfile);
-    } while (isDone);
+  do {
 
-    return 0;
+    isDone = menuLoop(currentProfile);
+    
+  } while (isDone);
+
+  return 0;
 }
