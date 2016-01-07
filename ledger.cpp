@@ -22,26 +22,21 @@ void Profile::addTransaction(std::string description, float amount) {
     t.description = description;
     t.amount = amount;
     this->_transList.push_back(t);
+    this->_balance += amount;
 }
 
 
 void Profile::printTransactionList() {
-    for (auto i = this->_transList.begin(); i != this->_transList.end(); ++i) {
-        std::cout << (*i).description << (*i).amount << std::endl;
+    for (auto &i : this->_transList) {
+        std::cout << i.description << i.amount << std::endl;
     }
 }
 
-//void printTransactionList() {
 //// Formatting work in progress
 ////    std::cout << "------------------------------------------------" << endl;
 ////    std::cout << "|     Desc     |                      | Amount |" << endl;
 ////    std::cout << "|-----------------------------------------------" << endl;
 
-//    // Classic for loop, possibly replace with range for or something better?
-//    for (auto i = transList.begin(); i != transList.end(); ++i) {
-//        std::cout << (*i).description << (*i).amount << std::endl;
-//    }
-//}
 
 std::string chooseProfile() {
     std::string profileName;
@@ -52,8 +47,6 @@ std::string chooseProfile() {
               << "(if entered profile name does not exist, you will be prompted to create it)" << std::endl
               << ": ";
     getline(std::cin, profileName);
-    if (profileName == "\n")
-        return "Default";
     // Error checking
 
     return profileName;
@@ -69,6 +62,7 @@ bool menuLoop(Profile &currentProfile) {
               << "C: Quit the program" << std::endl;
     std::cout << "Selection: ";
     std::cin >> selection;
+    std::cin.ignore();
 
     switch (selection) {
     case 'A' :

@@ -32,32 +32,24 @@ public:
 
     // void printTransactionList
     /* prints all the transactions currently stored
-     * formatting is a necessity and filters will be added later? most likely in a separate function
-     * FIX: Avoid initializing struct just to add values to vector
      */
     void printTransactionList();
 private:
     std::string _profileName;
     std::vector<Transaction> _transList;
-    float _balance;
+    float _balance = 0;
 };
 
-/* Old global transaction list
- * std::vector<Transaction> transList;
- */
 
-
-// std::string chooseProfile
-/* Prompts user for Profile name and returns it
- * Very simple method of getting Profile name, does not handle file IO
- * Note: Profile name is used for filename and class object name!
+/* std::string chooseProfile
+ * Prompts user for Profile name and returns it
  */
 std::string chooseProfile();
 
 
-// bool menuLoop
-/* Starts the main loop after an account has been chosen
+/* bool menuLoop
  * Accepts reference to active profile object
+ * Returns false when user has opted to quit
  */
 bool menuLoop(Profile *currentProfile);
 
