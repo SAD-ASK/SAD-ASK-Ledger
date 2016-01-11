@@ -46,17 +46,27 @@ void Profile::printTransactionList() {
 
 
 std::string chooseProfile() {
-    std::string profileName;
-    std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
-              << "Version: "   << PROGRAM::VERSION << std::endl;
+    while (true) {
+        std::string profileName;
+        std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
+                  << "Version: "   << PROGRAM::VERSION << std::endl;
 
-    std::cout << "Please enter the profile name you wish to use" << std::endl
-              << "(if entered profile name does not exist, you will be prompted to create it)" << std::endl
-              << ": ";
-    getline(std::cin, profileName);
-    // Error checking
+        std::cout << "Please enter the profile name you wish to use" << std::endl
+                  << "(if entered profile name does not exist, you will be prompted to create it)" << std::endl
+                  << ": ";
+        getline(std::cin, profileName);
+        // Error checking
 
-    return profileName;
+        std::string fileName = "profiles/" + profileName + ".txt";
+
+        // Return if exists already
+        if (std::ifstream(fileName)) {
+            return profileName;
+        }
+        else return createIfNew(fileName)
+
+        }
+    }
 }
 
 bool menuLoop(Profile &currentProfile) {
@@ -101,11 +111,29 @@ bool menuLoop(Profile &currentProfile) {
     return true;
 }
 
+
+bool createIfNew(std::string fileName) {
+    char choiceToCreate;
+    std::cout << "Profile does not exist, create?" << std::endl
+              << "(y/n): ";
+
+    std::cin >> choiceToCreate;
+    if ((choiceToCreate == 'Y') | (choiceToCreate == 'y')) {
+        std::ofstream newProfile(fileName);
+    }
+    else {
+        std::cout << "Okay, hit ENTER to start profile selection again";
+        std::getchar();
+        return false;
+    }
+}
+
 int main( ) {
 
     // Choose account
     std::string profileName = chooseProfile();
     Profile currentProfile;
+    std::fstream currentFile;
     bool isDone = true;
 
     do {
