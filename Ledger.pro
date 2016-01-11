@@ -11,5 +11,6 @@ HEADERS += \
 
 DISTFILES += \
     TODO \
-    NOTES
+    NOTES \
+    README.md
 
