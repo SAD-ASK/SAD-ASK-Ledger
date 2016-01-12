@@ -63,7 +63,7 @@ std::string chooseProfile() {
         if (std::ifstream(fileName)) {
             return profileName;
         }
-        else return createIfNew(fileName)
+        else return queryCreateNewProfile(profileName, fileName)
 
         }
     }
@@ -112,20 +112,24 @@ bool menuLoop(Profile &currentProfile) {
 }
 
 
-bool createIfNew(std::string fileName) {
-    char choiceToCreate;
-    std::cout << "Profile does not exist, create?" << std::endl
+std::string queryCreateNewProfile(std::string profileName, std::string fileName) {
+    char selection;
+    do {
+    std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
               << "(y/n): ";
+    std::cin >> selection;
+    if ( !( (selection == 'y') | (selection == 'n') ) )
+        std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
+    } while ( (selection == 'y') | (selection == 'n') );
 
-    std::cin >> choiceToCreate;
-    if ((choiceToCreate == 'Y') | (choiceToCreate == 'y')) {
-        std::ofstream newProfile(fileName);
+    if (selection == 'y') {
+        std::fstream file;
+        file.open(fileName, std::fstream::out);
+        file.close();
+        return fileName;
     }
-    else {
-        std::cout << "Okay, hit ENTER to start profile selection again";
-        std::getchar();
-        return false;
-    }
+    else
+        // WHERE I LEFT OFF
 }
 
 int main( ) {

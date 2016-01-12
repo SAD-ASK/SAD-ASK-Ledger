@@ -52,11 +52,12 @@ std::string chooseProfile();
  */
 bool menuLoop(Profile *currentProfile);
 
-/* std::string createIfNew(std::string profileName)
- * Asks user if they want to create nonexistant profile and returns true
- * if profile was created
+
+/* std::string queryCreateNewProfile(std::string)
+ * Handles creating new profile if selected one doesn't exist
+ * Returns filepath of new profile
  */
-bool createIfNew(std::string profileName);
+std::string queryCreateNewProfile(std::string profileName, std::string fileName);
 
 #endif // LEDGER_H
 
