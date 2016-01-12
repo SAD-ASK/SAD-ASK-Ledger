@@ -18,6 +18,12 @@ struct Transaction {
 };
 
 
+/* void initialize()
+ * Initializes stuff. Only checks profile folder status atm
+ */
+void initialize();
+
+
 // Profile class
 class Profile {
 public:
@@ -53,11 +59,11 @@ std::string chooseProfile();
 bool menuLoop(Profile *currentProfile);
 
 
-/* std::string queryCreateNewProfile(std::string)
+/* bool queryCreateNewProfile(std::string)
  * Handles creating new profile if selected one doesn't exist
- * Returns filepath of new profile
+ * Returns true if new profile created, false if not
  */
-std::string queryCreateNewProfile(std::string profileName, std::string fileName);
+bool queryCreateNewProfile(std::string profileName, std::string fileName);
 
 #endif // LEDGER_H
 

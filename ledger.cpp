@@ -3,6 +3,12 @@
 #include <iomanip>
 #include "ledger.h"
 
+
+void initialize() {
+    // mkdir seems to be standard for windows AND *nixes...so...
+    int fSuccess = system("mkdir profiles");
+}
+
 // Never to see the light of day...
 Profile::Profile() :
     _profileName("Default"),
@@ -46,7 +52,8 @@ void Profile::printTransactionList() {
 
 
 std::string chooseProfile() {
-    while (true) {
+    bool querySuccess = false;
+    do  {
         std::string profileName;
         std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
                   << "Version: "   << PROGRAM::VERSION << std::endl;
@@ -57,16 +64,20 @@ std::string chooseProfile() {
         getline(std::cin, profileName);
         // Error checking
 
+        // default if it were working...
         std::string fileName = "profiles/" + profileName + ".txt";
 
         // Return if exists already
-        if (std::ifstream(fileName)) {
+        if (std::ifstream(fileName))
             return profileName;
-        }
-        else return queryCreateNewProfile(profileName, fileName)
 
+        else {
+            querySuccess = queryCreateNewProfile(profileName, fileName);
+            if (querySuccess)
+                return profileName;
         }
-    }
+
+    } while (!querySuccess);
 }
 
 bool menuLoop(Profile &currentProfile) {
@@ -112,27 +123,35 @@ bool menuLoop(Profile &currentProfile) {
 }
 
 
-std::string queryCreateNewProfile(std::string profileName, std::string fileName) {
+bool queryCreateNewProfile(std::string profileName, std::string fileName) {
     char selection;
+    bool profileCreated = false;
+
     do {
-    std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
-              << "(y/n): ";
-    std::cin >> selection;
-    if ( !( (selection == 'y') | (selection == 'n') ) )
-        std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
-    } while ( (selection == 'y') | (selection == 'n') );
+
+        std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
+                  << "(y/n): ";
+        std::cin >> selection;
+        if ( !( (selection == 'y') | (selection == 'n') ) )
+            std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
+    } while ( !((selection == 'y') | (selection == 'n')) );
 
     if (selection == 'y') {
         std::fstream file;
-        file.open(fileName, std::fstream::out);
+        file.open(fileName, std::ios::out);
+        file << std::flush;
         file.close();
-        return fileName;
+        profileCreated = true;
+        std::cout << "File should be created..." << std::endl;
     }
-    else
-        // WHERE I LEFT OFF
+
+    return profileCreated;
 }
 
 int main( ) {
+
+    // Initialize settings and stuff
+    initialize();
 
     // Choose account
     std::string profileName = chooseProfile();
