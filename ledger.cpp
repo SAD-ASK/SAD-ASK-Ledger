@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cstring>
 #include "ledger.h"
 
 
@@ -17,12 +18,24 @@ Profile::Profile() :
 {}
 
 
+Profile::Profile(std::string profileName) :
+    _profileName(profileName),
+    _transList(),
+    _balance(0),
+    _fileName("profiles/" + profileName + ".txt")
+{
+    // Loads profile file
+    loadFile();
+}
+
+
 void Profile::addTransaction(std::string description, float amount) {
     Transaction t;
     t.description = description;
     t.amount = amount;
     this->_transList.push_back(t);
     this->_balance += amount;
+    saveToFile(t);
 }
 
 
@@ -51,6 +64,50 @@ void Profile::printTransactionList() {
 }
 
 
+void Profile::saveToFile(struct Transaction transaction) {
+    std::ofstream file;
+    file.open(this->_fileName,std::ios::app);
+    if (file.is_open()) {
+        file << transaction.description << "|"
+             << transaction.amount      << "\n";
+        file.close();
+    }
+    else std::cout << "Unable to open file, exiting" << std::endl;
+}
+
+
+void Profile::loadFile() {
+    std::ifstream file;
+    std::string entry;
+    file.open(this->_fileName);
+    if (file.is_open()) {
+        while (getline(file,entry)) {
+            this->_transList.push_back(convertEntryToTransaction(entry));
+        }
+    }
+}
+
+
+struct Transaction Profile::convertEntryToTransaction(std::string entry) {
+    Transaction t;
+
+    std::size_t startPos = 0;
+    std::size_t nextTokenPos;
+    std::vector<std::string> elements;
+    std::string subString;
+
+    // Gets description
+    t.description = entry.substr(0, nextTokenPos = entry.find("|"));
+    startPos = nextTokenPos + 1;
+
+    // Gets amount
+    subString = entry.substr(startPos, nextTokenPos = entry.find("\n"));
+    t.amount = std::stof(subString);
+
+    return t;
+}
+
+
 std::string chooseProfile() {
     bool querySuccess = false;
     do  {
@@ -62,6 +119,7 @@ std::string chooseProfile() {
                   << "(if entered profile name does not exist, you will be prompted to create it)" << std::endl
                   << ": ";
         getline(std::cin, profileName);
+
         // Error checking
 
         // default if it were working...
@@ -148,6 +206,7 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
     return profileCreated;
 }
 
+
 int main( ) {
 
     // Initialize settings and stuff
@@ -155,7 +214,9 @@ int main( ) {
 
     // Choose account
     std::string profileName = chooseProfile();
-    Profile currentProfile;
+    Profile currentProfile(profileName);
+
+    // Read profile file
     std::fstream currentFile;
     bool isDone = true;
 

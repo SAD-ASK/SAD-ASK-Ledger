@@ -28,6 +28,7 @@ void initialize();
 class Profile {
 public:
     Profile();
+    Profile(std::string profileName);
 
     /* void addTransaction
      * Adds a transaction to the vector
@@ -35,14 +36,36 @@ public:
     void addTransaction(std::string description, float amount);
 
 
-    // void printTransactionList
-    /* prints all the transactions currently stored
+    /* void printTransactionList
+     * prints all the transactions currently stored
      */
     void printTransactionList();
+
+
+    /* void saveToFile(struct Transaction)
+     * Saves new transaction to file
+     */
+    void saveToFile(struct Transaction transaction);
+
+
+    /* void loadFile
+     * Loads the profile's data file during object construction
+     */
+    void loadFile();
+
+
+    /* struct Transaction convertEntryToTransaction
+     * Helper function that converts Entry string in loadFile() to a Transaction data structure for loading
+     */
+    struct Transaction convertEntryToTransaction(std::string entry);
+
+
+
 private:
     std::string _profileName;
     std::vector<Transaction> _transList;
     float _balance = 0;
+    std::string _fileName;
 };
 
 
@@ -64,6 +87,9 @@ bool menuLoop(Profile *currentProfile);
  * Returns true if new profile created, false if not
  */
 bool queryCreateNewProfile(std::string profileName, std::string fileName);
+
+
+
 
 #endif // LEDGER_H
 
