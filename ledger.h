@@ -16,13 +16,8 @@ struct Transaction {
     std::string description = "Transaction";
     float amount = 0;
     int id;
+
 };
-
-
-///* bool deletionPredicate(const Transaction& trans, int idToDelete)
-// * function to return predicate for deleteTransaction
-// */
-//bool deletionPredicate(const Transaction& trans, int idToDelete);
 
 
 

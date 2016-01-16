@@ -85,9 +85,9 @@ void Profile::deleteTransaction() {
             (*i).id = 0;
         }
     }
-
-    this->_transList.erase(std::remove(this->_transList.begin(), this->_transList.end(),
-                                       /* predicate!! */), this->_transList.end());
+    // my first lambda
+    this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
+                                       [](Transaction const& t) { return t.id == 0; }), this->_transList.end());
 }
 
 
