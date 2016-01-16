@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstring>
+#include <algorithm>
 #include "ledger.h"
 
 
@@ -64,6 +65,29 @@ void Profile::printTransactionList() {
 }
 
 
+void Profile::deleteTransaction() {
+    int selection = 0;
+
+    std::cout << "What is the id number of the transaction you wish to remove?" << std::endl
+              << ": ";
+    do {
+        std::cin >> selection;
+        if ((selection < 1) || (selection > this->_transList.back().id)) {
+            std::cout << "Incorrect input, correct range of Ids is: ";
+            std::cout << "1 - " << this->_transList.back().id << std::endl;
+        }
+    } while ((selection < 1) || (selection > this->_transList.back().id));
+
+    // Predicate for erase-removal (could be replaced with a lambda function? Don't know those yet...
+//    bool predicate(const Transaction& item, int selection) {
+//        return this->_transList.id == selection;
+//    }
+
+//    this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
+//            this->_transList.end());
+}
+
+
 void Profile::saveToFile(struct Transaction transaction) {
     std::ofstream file;
     file.open(this->_fileName,std::ios::app);
@@ -79,10 +103,14 @@ void Profile::saveToFile(struct Transaction transaction) {
 void Profile::loadFile() {
     std::ifstream file;
     std::string entry;
+    int idNumberCounter = 0;
+
     file.open(this->_fileName);
     if (file.is_open()) {
         while (getline(file,entry)) {
+            idNumberCounter++;
             this->_transList.push_back(convertEntryToTransaction(entry));
+            this->_transList.back().id = idNumberCounter;
         }
     }
 }
@@ -93,7 +121,6 @@ struct Transaction Profile::convertEntryToTransaction(std::string entry) {
 
     std::size_t startPos = 0;
     std::size_t nextTokenPos;
-    std::vector<std::string> elements;
     std::string subString;
 
     // Gets description
@@ -136,16 +163,20 @@ std::string chooseProfile() {
         }
 
     } while (!querySuccess);
+
+    std::cout << "Something went wrong, Default profile loaded" << std::endl;
+    return "Default";
 }
 
 bool menuLoop(Profile &currentProfile) {
 
     char selection;
 
-    std::cout << "Please make a selection" << std::endl
-              << "A: Add a transaction" << std::endl
+    std::cout << "Please make a selection"  << std::endl
+              << "A: Add a transaction"     << std::endl
+              << "D: Delete a transaction"  << std::endl
               << "L: View transaction list" << std::endl
-              << "Q: Quit the program" << std::endl;
+              << "Q: Quit the program"      << std::endl;
     std::cout << "Selection: ";
     std::cin >> selection;
     std::cin.ignore();
@@ -165,6 +196,9 @@ bool menuLoop(Profile &currentProfile) {
         currentProfile.addTransaction(description, amount);
         break;
     }
+    case 'D' :
+    case 'd' :
+        currentProfile.deleteTransaction();
 
     case 'L' :
     case 'l' :

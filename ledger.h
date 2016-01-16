@@ -15,6 +15,7 @@ const std::string VERSION       ("0.0.1");
 struct Transaction {
     std::string description = "Transaction";
     float amount = 0;
+    int id;
 };
 
 
@@ -40,6 +41,13 @@ public:
      * prints all the transactions currently stored
      */
     void printTransactionList();
+
+
+    /* void deleteTransaction
+     * Deletes a transaction from the vector by matchind description
+     * numInList: optional parameter for determining which occurance of description to delete
+     */
+    void deleteTransaction();
 
 
     /* void saveToFile(struct Transaction)
