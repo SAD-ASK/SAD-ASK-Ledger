@@ -19,6 +19,13 @@ struct Transaction {
 };
 
 
+///* bool deletionPredicate(const Transaction& trans, int idToDelete)
+// * function to return predicate for deleteTransaction
+// */
+//bool deletionPredicate(const Transaction& trans, int idToDelete);
+
+
+
 /* void initialize()
  * Initializes stuff. Only checks profile folder status atm
  */
@@ -41,6 +48,7 @@ public:
      * prints all the transactions currently stored
      */
     void printTransactionList();
+
 
 
     /* void deleteTransaction

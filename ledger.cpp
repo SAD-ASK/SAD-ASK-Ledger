@@ -34,6 +34,7 @@ void Profile::addTransaction(std::string description, float amount) {
     Transaction t;
     t.description = description;
     t.amount = amount;
+    t.id = this->_transList.back().id + 1;
     this->_transList.push_back(t);
     this->_balance += amount;
     saveToFile(t);
@@ -65,6 +66,7 @@ void Profile::printTransactionList() {
 }
 
 
+
 void Profile::deleteTransaction() {
     int selection = 0;
 
@@ -78,6 +80,20 @@ void Profile::deleteTransaction() {
         }
     } while ((selection < 1) || (selection > this->_transList.back().id));
 
+    for (auto i = this->_transList.begin(); i != this->_transList.end(); ++i) {
+        if ( (*i).id == selection ) {
+            (*i).id = 0;
+        }
+    }
+
+    this->_transList.erase(std::remove(this->_transList.begin(), this->_transList.end(),
+                                       /* predicate!! */), this->_transList.end());
+}
+
+
+
+
+
     // Predicate for erase-removal (could be replaced with a lambda function? Don't know those yet...
 //    bool predicate(const Transaction& item, int selection) {
 //        return this->_transList.id == selection;
@@ -85,7 +101,10 @@ void Profile::deleteTransaction() {
 
 //    this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
 //            this->_transList.end());
-}
+
+//    this->_transList.erase( std::remove_if( this->_transList.begin(), this->_transList.end(),
+//                                            deletionPredicate(this->_transList, selection)));
+//
 
 
 void Profile::saveToFile(struct Transaction transaction) {
