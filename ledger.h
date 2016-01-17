@@ -36,7 +36,7 @@ public:
     /* void addTransaction
      * Adds a transaction to the vector
      */
-    void addTransaction(std::string description, float amount);
+    void addTransaction();
 
 
     /* void printTransactionList

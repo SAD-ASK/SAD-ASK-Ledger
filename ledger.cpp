@@ -30,7 +30,17 @@ Profile::Profile(std::string profileName) :
 }
 
 
-void Profile::addTransaction(std::string description, float amount) {
+void Profile::addTransaction() {
+    std::string description;
+    float amount;
+
+    std::cout << "What do you want to call the transaction?" << std::endl << ": ";
+    getline(std::cin, description);
+
+    std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl << ": ";
+    std::cin >> amount;
+
+
     Transaction t;
     t.description = description;
     t.amount = amount;
@@ -68,7 +78,8 @@ void Profile::printTransactionList() {
 
 
 void Profile::deleteTransaction() {
-    int selection = 0;
+    std::vector<Transaction>::size_type idToDelete;
+    int selection;
 
     std::cout << "What is the id number of the transaction you wish to remove?" << std::endl
               << ": ";
@@ -89,22 +100,6 @@ void Profile::deleteTransaction() {
     this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
                                        [](Transaction const& t) { return t.id == 0; }), this->_transList.end());
 }
-
-
-
-
-
-    // Predicate for erase-removal (could be replaced with a lambda function? Don't know those yet...
-//    bool predicate(const Transaction& item, int selection) {
-//        return this->_transList.id == selection;
-//    }
-
-//    this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
-//            this->_transList.end());
-
-//    this->_transList.erase( std::remove_if( this->_transList.begin(), this->_transList.end(),
-//                                            deletionPredicate(this->_transList, selection)));
-//
 
 
 void Profile::saveToFile(struct Transaction transaction) {
@@ -202,27 +197,20 @@ bool menuLoop(Profile &currentProfile) {
 
     switch (selection) {
     case 'A' :
-    case 'a' : {
-        std::string description;
-        float amount;
-
-        std::cout << "What do you want to call the transaction?" << std::endl << ": ";
-        getline(std::cin, description);
-
-        std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl << ": ";
-        std::cin >> amount;
-
-        currentProfile.addTransaction(description, amount);
+    case 'a' :
+        currentProfile.addTransaction();
         break;
-    }
+
     case 'D' :
     case 'd' :
         currentProfile.deleteTransaction();
+        break;
 
     case 'L' :
     case 'l' :
         currentProfile.printTransactionList();
         break;
+
     case 'Q' :
     case 'q' :
         return false;
