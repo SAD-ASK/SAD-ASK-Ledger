@@ -2,6 +2,8 @@
 #define LEDGER_H
 #include <string>
 #include <vector>
+#include "sqlite3.h"
+
 
 // Program info
 namespace PROGRAM {
@@ -75,6 +77,7 @@ private:
     std::string _profileName;
     std::vector<Transaction> _transList;
     float _balance = 0;
+    sqlite3* _database;
     std::string _fileName;
 };
 

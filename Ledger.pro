@@ -15,5 +15,6 @@ HEADERS += \
 DISTFILES += \
     TODO \
     NOTES \
-    README.md
+    README.md \
+    Makefile
 
