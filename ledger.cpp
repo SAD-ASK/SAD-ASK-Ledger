@@ -78,7 +78,6 @@ void Profile::printTransactionList() {
 
 
 void Profile::deleteTransaction() {
-    std::vector<Transaction>::size_type idToDelete;
     int selection;
 
     std::cout << "What is the id number of the transaction you wish to remove?" << std::endl

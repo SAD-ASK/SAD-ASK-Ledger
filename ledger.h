@@ -6,7 +6,7 @@
 // Program info
 namespace PROGRAM {
 const std::string NAME          ("SAD-ASK-Ledger");
-const std::string VERSION       ("0.0.1");
+const std::string VERSION       ("0.0.2");
 }
 
 
@@ -18,7 +18,6 @@ struct Transaction {
     int id;
 
 };
-
 
 
 /* void initialize()

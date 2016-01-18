@@ -4,10 +4,13 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-    ledger.cpp
+    ledger.cpp \
+    sqlite3.c \
+    sqlite3.c
 
 HEADERS += \
-    ledger.h
+    ledger.h \
+    sqlite3.h
 
 DISTFILES += \
     TODO \
