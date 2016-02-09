@@ -15,7 +15,8 @@ void initialize() {
 Profile::Profile() :
     _profileName("Default"),
     _transList(),
-    _balance(0)
+    _balance(0),
+    _unsavedEdits(false)
 {}
 
 
@@ -23,10 +24,18 @@ Profile::Profile(std::string profileName) :
     _profileName(profileName),
     _transList(),
     _balance(0),
-    _fileName("profiles/" + profileName + ".txt")
+    _fileName("profiles/" + profileName + ".txt"),
+    _unsavedEdits(false)
 {
     // Loads profile file
     loadFile();
+}
+
+
+Profile::~Profile() {
+    if (this->_unsavedEdits) {
+        this->saveToFile();
+    }
 }
 
 
@@ -47,7 +56,9 @@ void Profile::addTransaction() {
     t.id = this->_transList.back().id + 1;
     this->_transList.push_back(t);
     this->_balance += amount;
-    saveToFile(t);
+
+    this->_unsavedEdits = true;
+    //saveToFile(t);
 }
 
 
@@ -98,18 +109,34 @@ void Profile::deleteTransaction() {
     // my first lambda
     this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
                                        [](Transaction const& t) { return t.id == 0; }), this->_transList.end());
+
+    this->_unsavedEdits = true;
 }
 
 
-void Profile::saveToFile(struct Transaction transaction) {
+//void Profile::saveToFile(struct Transaction transaction) {
+//    std::ofstream file;
+//    file.open(this->_fileName,std::ios::app);
+//    if (file.is_open()) {
+//        file << transaction.description << "|"
+//             << transaction.amount      << "\n";
+//        file.close();
+//    }
+//    else std::cout << "Unable to open file, exiting" << std::endl;
+//}
+
+
+void Profile::saveToFile() {
     std::ofstream file;
-    file.open(this->_fileName,std::ios::app);
+
+    file.open(this->_fileName,std::ios::trunc);
     if (file.is_open()) {
-        file << transaction.description << "|"
-             << transaction.amount      << "\n";
-        file.close();
+        for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
+            file << (*i).description << "|"
+                 << (*i).amount      << "\n";
+        }
     }
-    else std::cout << "Unable to open file, exiting" << std::endl;
+    file.close();
 }
 
 

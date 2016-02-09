@@ -31,6 +31,7 @@ class Profile {
 public:
     Profile();
     Profile(std::string profileName);
+    ~Profile();
 
     /* void addTransaction
      * Adds a transaction to the vector
@@ -55,7 +56,8 @@ public:
     /* void saveToFile(struct Transaction)
      * Saves new transaction to file
      */
-    void saveToFile(struct Transaction transaction);
+    //void saveToFile(struct Transaction transaction);
+    void saveToFile();
 
 
     /* void loadFile
@@ -71,11 +73,13 @@ public:
 
 
 
+
 private:
     std::string _profileName;
     std::vector<Transaction> _transList;
     float _balance = 0;
     std::string _fileName;
+    bool _unsavedEdits;
 };
 
 
