@@ -177,34 +177,49 @@ struct Transaction Profile::convertEntryToTransaction(std::string entry) {
 
 std::string chooseProfile() {
     bool querySuccess = false;
-    do  {
-        std::string profileName;
-        std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
-                  << "Version: "   << PROGRAM::VERSION << std::endl;
+    std::string profileName;
+    std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
+              << "Version: "   << PROGRAM::VERSION << std::endl;
 
+    do {
         std::cout << "Please enter the profile name you wish to use" << std::endl
-                  << "(if entered profile name does not exist, you will be prompted to create it)" << std::endl
+                  << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
+                  << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl
                   << ": ";
-        getline(std::cin, profileName);
-
-        // Error checking
-
-        // default if it were working...
-        std::string fileName = "profiles/" + profileName + ".txt";
-
-        // Return if exists already
-        if (std::ifstream(fileName))
-            return profileName;
-
-        else {
-            querySuccess = queryCreateNewProfile(profileName, fileName);
-            if (querySuccess)
-                return profileName;
+        if (getline(std::cin, profileName)) {
+            if (std::cin.fail()) {
+                std::cin.clear();
+                std::cout << "Incorrect input, try again" << std::endl;
+                continue;
+            }
+            if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
+                std::cout << "Profile name must not contain spaces" << std::endl;
+                continue;
+            }
+            if ( !(std::any_of( profileName.begin(), profileName.end(), ::isalpha))) {
+                std::cout << "Profile name can only contain alphabet characters!" << std::endl;
+                continue;
+            }
+            else querySuccess = true;
         }
-
     } while (!querySuccess);
 
-    std::cout << "Something went wrong, Default profile loaded" << std::endl;
+
+    // default if it were working...
+    std::string fileName = "profiles/" + profileName + ".txt";
+
+    // Return if exists already
+    if (std::ifstream(fileName))
+        return profileName;
+
+    else {
+        querySuccess = queryCreateNewProfile(profileName, fileName);
+        if (querySuccess)
+            return profileName;
+    }
+
+
+    std::cout << "Something went wrong, Default profile loaded, please exit the program normally." << std::endl;
     return "Default";
 }
 
@@ -239,6 +254,7 @@ bool menuLoop(Profile &currentProfile) {
 
     case 'Q' :
     case 'q' :
+        currentProfile.~Profile();
         return false;
 
     default:
