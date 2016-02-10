@@ -10,13 +10,33 @@ const std::string VERSION       ("0.0.2");
 }
 
 
+enum TENDER_TYPE {
+    CASH,
+    CREDIT,
+    DEBIT
+};
+
+
+enum TRANS_ATTRIBUTE {
+    NOVELTY,
+    FOOD,
+    RESTAURANT,
+    CLOTHING,
+    GAS,
+    BILL,
+    VICE,
+    HOME,
+    NUM_OF_ATTRS
+};
+
+
 /* Transaction data type
  */
 struct Transaction {
     std::string description = "Transaction";
     float amount = 0;
     int id;
-
+    int attribute;
 };
 
 
@@ -38,6 +58,12 @@ public:
      */
     void addTransaction();
 
+
+
+    /* int convertStringToEnum
+     * Helper function that converts string to appropriate enum structure
+     */
+    int convertStringToEnum(std::string attribute, int conversionType);
 
     /* void printTransactionList
      * prints all the transactions currently stored
@@ -72,14 +98,20 @@ public:
     struct Transaction convertEntryToTransaction(std::string entry);
 
 
+    /* float getBalance
+     * Returns wallet balance
+     */
+    float getBalance() {
+        return *(this->_balance);
+    }
 
 
 private:
     std::string _profileName;
     std::vector<Transaction> _transList;
-    float _balance = 0;
+    float _balance[NUM_OF_ATTRS] = {0};
     std::string _fileName;
-    bool _unsavedEdits;
+    bool _unsavedEdits = false;
 };
 
 

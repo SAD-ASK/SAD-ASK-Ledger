@@ -12,21 +12,16 @@ void initialize() {
 }
 
 // Never to see the light of day...
-Profile::Profile() :
-    _profileName("Default"),
-    _transList(),
-    _balance(0),
-    _unsavedEdits(false)
-{}
+Profile::Profile() {
+    this->_profileName = "Default";
+    this->_unsavedEdits = false;
+}
 
 
-Profile::Profile(std::string profileName) :
-    _profileName(profileName),
-    _transList(),
-    _balance(0),
-    _fileName("profiles/" + profileName + ".txt"),
-    _unsavedEdits(false)
-{
+Profile::Profile(std::string profileName) {
+    this->_profileName = profileName;
+    this->_fileName = ("profiles/" + profileName + ".txt");
+    this->_unsavedEdits = false;
     // Loads profile file
     loadFile();
 }
@@ -42,6 +37,10 @@ Profile::~Profile() {
 void Profile::addTransaction() {
     std::string description;
     float amount;
+    std::string transAttribute;
+    int intAttribute;
+    std::string transTender;
+    int intTender;
 
     std::cout << "What do you want to call the transaction?" << std::endl << ": ";
     getline(std::cin, description);
@@ -49,18 +48,66 @@ void Profile::addTransaction() {
     std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl << ": ";
     std::cin >> amount;
 
+    std::cout << "What type of transaction is this?" << std::endl
+              << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl << ": ";
+    std::cin.ignore();
+    getline(std::cin, transAttribute);
+    intAttribute = convertStringToEnum(transAttribute, 2);
+
+    std::cout << "What did you pay with?" << std::endl
+              << "(Cash, Credit, Debit)" << ": ";
+    getline(std::cin, transTender);
+    intTender = convertStringToEnum(transTender, 1);
+
+
+
 
     Transaction t;
     t.description = description;
     t.amount = amount;
+    t.attribute = intAttribute;
     t.id = this->_transList.back().id + 1;
     this->_transList.push_back(t);
-    this->_balance += amount;
+    _balance[intTender] += amount;
 
     this->_unsavedEdits = true;
     //saveToFile(t);
 }
 
+
+int Profile::convertStringToEnum(std::string attribute, int conversionType) {
+    std::transform( attribute.begin(), attribute.end(), std::back_inserter(attribute), ::toupper);
+    if (conversionType == 1) {
+        if ( attribute == "cash" )
+            return 0;
+        if ( attribute == "credit" )
+            return 1;
+        if ( attribute == "debit" )
+            return 2;
+        else return 0;
+    }
+    if (conversionType == 2) {
+
+        if ( attribute == "novelty" )
+            return 0;
+        if ( attribute == "food" )
+            return 1;
+        if ( attribute == "restaurant" )
+            return 2;
+        if ( attribute == "clothing" )
+            return 3;
+        if ( attribute == "gas" )
+            return 4;
+        if ( attribute == "bill" )
+            return 5;
+        if ( attribute == "vice" )
+            return 6;
+        if ( attribute == "home" )
+            return 7;
+        else return 0;
+    }
+    return 0;
+}
 
 void Profile::printTransactionList() {
 
@@ -181,43 +228,44 @@ std::string chooseProfile() {
     std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
               << "Version: "   << PROGRAM::VERSION << std::endl;
 
-    do {
-        std::cout << "Please enter the profile name you wish to use" << std::endl
-                  << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
-                  << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl
-                  << ": ";
-        if (getline(std::cin, profileName)) {
-            if (std::cin.fail()) {
-                std::cin.clear();
-                std::cout << "Incorrect input, try again" << std::endl;
-                continue;
+    while (true) {
+        do {
+            std::cout << "Please enter the profile name you wish to use" << std::endl
+                      << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
+                      << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl
+                      << ": ";
+            if (getline(std::cin, profileName)) {
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cout << "Incorrect input, try again" << std::endl;
+                    continue;
+                }
+                if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
+                    std::cout << "Profile name must not contain spaces" << std::endl;
+                    continue;
+                }
+                if ( !(std::any_of( profileName.begin(), profileName.end(), ::isalpha))) {
+                    std::cout << "Profile name can only contain alphabet characters!" << std::endl;
+                    continue;
+                }
+                else querySuccess = true;
             }
-            if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
-                std::cout << "Profile name must not contain spaces" << std::endl;
-                continue;
-            }
-            if ( !(std::any_of( profileName.begin(), profileName.end(), ::isalpha))) {
-                std::cout << "Profile name can only contain alphabet characters!" << std::endl;
-                continue;
-            }
-            else querySuccess = true;
-        }
-    } while (!querySuccess);
+        } while (!querySuccess);
 
 
-    // default if it were working...
-    std::string fileName = "profiles/" + profileName + ".txt";
+        // default if it were working...
+        std::string fileName = "profiles/" + profileName + ".txt";
 
-    // Return if exists already
-    if (std::ifstream(fileName))
-        return profileName;
-
-    else {
-        querySuccess = queryCreateNewProfile(profileName, fileName);
-        if (querySuccess)
+        // Return if exists already
+        if (std::ifstream(fileName))
             return profileName;
-    }
 
+        else {
+            querySuccess = queryCreateNewProfile(profileName, fileName);
+            if (querySuccess)
+                return profileName;
+        }
+    }
 
     std::cout << "Something went wrong, Default profile loaded, please exit the program normally." << std::endl;
     return "Default";
@@ -254,7 +302,6 @@ bool menuLoop(Profile &currentProfile) {
 
     case 'Q' :
     case 'q' :
-        currentProfile.~Profile();
         return false;
 
     default:
@@ -273,6 +320,7 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
         std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
                   << "(y/n): ";
         std::cin >> selection;
+        std::cin.ignore();
         if ( !( (selection == 'y') | (selection == 'n') ) )
             std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
     } while ( !((selection == 'y') | (selection == 'n')) );
