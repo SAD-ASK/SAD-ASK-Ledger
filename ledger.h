@@ -6,14 +6,15 @@
 // Program info
 namespace PROGRAM {
 const std::string NAME          ("SAD-ASK-Ledger");
-const std::string VERSION       ("0.0.2");
+const std::string VERSION       ("0.0.3");
 }
 
 
 enum TENDER_TYPE {
     CASH,
     CREDIT,
-    DEBIT
+    DEBIT,
+    NUM_OF_TENDER
 };
 
 
@@ -37,6 +38,7 @@ struct Transaction {
     float amount = 0;
     int id;
     int attribute;
+    int tenderType;
 };
 
 
@@ -101,15 +103,15 @@ public:
     /* float getBalance
      * Returns wallet balance
      */
-    float getBalance() {
-        return *(this->_balance);
+    float getBalance(int tenderType) {
+        return this->_balance[tenderType];
     }
 
 
 private:
     std::string _profileName;
     std::vector<Transaction> _transList;
-    float _balance[NUM_OF_ATTRS] = {0};
+    float _balance[NUM_OF_TENDER] = {0};
     std::string _fileName;
     bool _unsavedEdits = false;
 };

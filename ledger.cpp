@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <cstring>
 #include <algorithm>
+#include <sstream>
 #include "ledger.h"
 
 
@@ -57,6 +58,7 @@ void Profile::addTransaction() {
     std::cout << "What did you pay with?" << std::endl
               << "(Cash, Credit, Debit)" << ": ";
     getline(std::cin, transTender);
+    std::cout << transTender << std::endl; // TEST TEST TEST TEST TEST!
     intTender = convertStringToEnum(transTender, 1);
 
 
@@ -66,7 +68,11 @@ void Profile::addTransaction() {
     t.description = description;
     t.amount = amount;
     t.attribute = intAttribute;
-    t.id = this->_transList.back().id + 1;
+    t.tenderType = intTender;
+    if (this->_transList.empty()) {
+        t.id = 0;
+    } else t.id = this->_transList.back().id + 1;
+
     this->_transList.push_back(t);
     _balance[intTender] += amount;
 
@@ -76,7 +82,7 @@ void Profile::addTransaction() {
 
 
 int Profile::convertStringToEnum(std::string attribute, int conversionType) {
-    std::transform( attribute.begin(), attribute.end(), std::back_inserter(attribute), ::toupper);
+    std::transform( attribute.begin(), attribute.end(), std::back_inserter(attribute), ::tolower);
     if (conversionType == 1) {
         if ( attribute == "cash" )
             return 0;
@@ -180,7 +186,8 @@ void Profile::saveToFile() {
     if (file.is_open()) {
         for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
             file << (*i).description << "|"
-                 << (*i).amount      << "\n";
+                 << (*i).amount      << "|"
+                 << (*i).tenderType  << "\n";
         }
     }
     file.close();
@@ -199,6 +206,9 @@ void Profile::loadFile() {
             this->_transList.push_back(convertEntryToTransaction(entry));
             this->_transList.back().id = idNumberCounter;
         }
+        for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
+            this->_balance[(*i).tenderType] += (*i).amount;
+        }
     }
 }
 
@@ -206,19 +216,41 @@ void Profile::loadFile() {
 struct Transaction Profile::convertEntryToTransaction(std::string entry) {
     Transaction t;
 
-    std::size_t startPos = 0;
-    std::size_t nextTokenPos;
-    std::string subString;
+//    std::size_t startPos = 0;
+//    std::size_t nextTokenPos;
+//    std::string subString;
 
-    // Gets description
-    t.description = entry.substr(0, nextTokenPos = entry.find("|"));
-    startPos = nextTokenPos + 1;
+//    // Gets description
+//    t.description = entry.substr(0, nextTokenPos = entry.find("|"));
+//    startPos = nextTokenPos + 1;
 
-    // Gets amount
-    subString = entry.substr(startPos, nextTokenPos = entry.find("\n"));
-    t.amount = std::stof(subString);
 
+//    // Gets amount
+//    subString = entry.substr(startPos, nextTokenPos = entry.find("|"));
+//    t.amount = std::stof(subString);
+//    startPos = nextTokenPos + 1;
+
+//    // Gets tender type
+//    subString = entry.substr(startPos, nextTokenPos = entry.find("\n"));
+//    t.tenderType = std::stoi(subString);
+
+//    return t;
+
+    // NEW STUFF
+
+    std::vector<std::string> vectorOfSubstrings;
+    std::string tempString;
+    std::istringstream ss(entry);
+
+    while (getline(ss, tempString, '|')) {
+        vectorOfSubstrings.push_back(tempString);
+    }
+
+    t.description = vectorOfSubstrings[0];
+    t.amount = std::stof(vectorOfSubstrings[1]);
+    t.tenderType = std::stoi(vectorOfSubstrings[2]);
     return t;
+
 }
 
 
@@ -279,6 +311,7 @@ bool menuLoop(Profile &currentProfile) {
               << "A: Add a transaction"     << std::endl
               << "D: Delete a transaction"  << std::endl
               << "L: View transaction list" << std::endl
+              << "B: View account balances" << std::endl
               << "Q: Quit the program"      << std::endl;
     std::cout << "Selection: ";
     std::cin >> selection;
@@ -294,6 +327,18 @@ bool menuLoop(Profile &currentProfile) {
     case 'd' :
         currentProfile.deleteTransaction();
         break;
+
+    case 'B' :
+    case 'b' : {
+        std::string selection;
+        int type;
+        std::cout << "What balance would you like to view?" << std::endl
+                  << "(Cash, Debit, Credit" << ": ";
+        getline(std::cin, selection);
+        type = currentProfile.convertStringToEnum(selection, 1);
+        std::cout << selection << ": " << currentProfile.getBalance(type) << std::endl;
+        break;
+    }
 
     case 'L' :
     case 'l' :
