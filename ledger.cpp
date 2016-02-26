@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <cstring>
 #include <algorithm>
 #include <sstream>
 #include "ledger.h"
@@ -13,19 +12,30 @@ void initialize() {
 }
 
 // Never to see the light of day...
-Profile::Profile() {
-    this->_profileName = "Default";
-    this->_unsavedEdits = false;
-}
+//Profile::Profile() {
+//    this->_profileName = "Default";
+//    this->_unsavedEdits = false;
+//}
+
+Profile::Profile() :
+    _profileName("Default"),
+    _unsavedEdits(false)
+{}
 
 
-Profile::Profile(std::string profileName) {
-    this->_profileName = profileName;
-    this->_fileName = ("profiles/" + profileName + ".txt");
-    this->_unsavedEdits = false;
-    // Loads profile file
-    loadFile();
-}
+//Profile::Profile(std::string profileName) {
+//    this->_profileName = profileName;
+//    this->_fileName = ("profiles/" + profileName + ".txt");
+//    this->_unsavedEdits = false;
+//    // Loads profile file
+//    loadFile();
+//}
+
+Profile::Profile(std::string profileName) :
+    _profileName(profileName),
+    _fileName("profiles/" + profileName + ".txt"),
+    _unsavedEdits(false)
+{ loadFile(); }
 
 
 Profile::~Profile() {
@@ -43,21 +53,27 @@ void Profile::addTransaction() {
     std::string transTender;
     int intTender;
 
-    std::cout << "What do you want to call the transaction?" << std::endl << ": ";
+    std::cout << "What do you want to call the transaction?" << std::endl;
+    printPrompt(this);
     getline(std::cin, description);
 
-    std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl << ": ";
+    std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl;
+    printPrompt(this);
     std::cin >> amount;
 
     std::cout << "What type of transaction is this?" << std::endl
-              << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl << ": ";
+              << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl;
+    printPrompt(this);
     std::cin.ignore();
     getline(std::cin, transAttribute);
+
     intAttribute = convertStringToEnum(transAttribute, 2);
 
     std::cout << "What did you pay with?" << std::endl
-              << "(Cash, Credit, Debit)" << ": ";
+              << "(Cash, Credit, Debit)"  << std::endl;
+    printPrompt(this);
     getline(std::cin, transTender);
+
     std::cout << transTender << std::endl; // TEST TEST TEST TEST TEST!
     intTender = convertStringToEnum(transTender, 1);
 
@@ -144,8 +160,8 @@ void Profile::printTransactionList() {
 void Profile::deleteTransaction() {
     int selection;
 
-    std::cout << "What is the id number of the transaction you wish to remove?" << std::endl
-              << ": ";
+    std::cout << "What is the id number of the transaction you wish to remove?" << std::endl;
+    printPrompt(this);
     do {
         std::cin >> selection;
         if ((selection < 1) || (selection > this->_transList.back().id)) {
@@ -264,8 +280,9 @@ std::string chooseProfile() {
         do {
             std::cout << "Please enter the profile name you wish to use" << std::endl
                       << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
-                      << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl
-                      << ": ";
+                      << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl;
+            printPrompt();
+
             if (getline(std::cin, profileName)) {
                 if (std::cin.fail()) {
                     std::cin.clear();
@@ -313,7 +330,7 @@ bool menuLoop(Profile &currentProfile) {
               << "L: View transaction list" << std::endl
               << "B: View account balances" << std::endl
               << "Q: Quit the program"      << std::endl;
-    std::cout << "Selection: ";
+    printPrompt();
     std::cin >> selection;
     std::cin.ignore();
 
@@ -333,8 +350,10 @@ bool menuLoop(Profile &currentProfile) {
         std::string selection;
         int type;
         std::cout << "What balance would you like to view?" << std::endl
-                  << "(Cash, Debit, Credit" << ": ";
+                  << "(Cash, Debit, Credit" << std::endl;
+        printPrompt();
         getline(std::cin, selection);
+
         type = currentProfile.convertStringToEnum(selection, 1);
         std::cout << selection << ": " << currentProfile.getBalance(type) << std::endl;
         break;
@@ -363,7 +382,8 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
     do {
 
         std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
-                  << "(y/n): ";
+                  << "(y/n)"    << std::endl;
+        printPrompt();
         std::cin >> selection;
         std::cin.ignore();
         if ( !( (selection == 'y') | (selection == 'n') ) )
@@ -382,6 +402,14 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
     return profileCreated;
 }
 
+
+void printPrompt() {
+    std::cout << "> ";
+}
+
+void printPrompt(Profile *profile) {
+    std::cout << profile->getFileName() << "> ";
+}
 
 int main( ) {
 

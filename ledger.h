@@ -107,6 +107,11 @@ public:
         return this->_balance[tenderType];
     }
 
+    /* std::string getProfileName
+     */
+    std::string getFileName() {
+        return this->_fileName;
+    }
 
 private:
     std::string _profileName;
@@ -136,6 +141,14 @@ bool menuLoop(Profile *currentProfile);
  */
 bool queryCreateNewProfile(std::string profileName, std::string fileName);
 
+
+
+/* void printPrompt
+ * Prints a consistent prompt before user input
+ * Overloaded version uses profile name
+ */
+void printPrompt();
+void printPrompt(Profile* profile);
 
 
 
