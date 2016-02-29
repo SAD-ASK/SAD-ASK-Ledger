@@ -44,7 +44,6 @@ std::string chooseProfile() {
         } while (!querySuccess);
 
 
-        // default if it were working...
         std::string fileName = "profiles/" + profileName + ".txt";
 
         // Return if exists already
@@ -168,7 +167,7 @@ void printPrompt() {
 }
 
 void printPrompt(Profile *profile) {
-    std::cout << profile->getFileName() << "> ";
+    std::cout << profile->getProfileName() << "> ";
 }
 
 int main( ) {
@@ -177,11 +176,9 @@ int main( ) {
     initialize();
 
     // Choose account
-    std::string profileName = chooseProfile();
-    Profile currentProfile(profileName);
+    Profile currentProfile(chooseProfile());
 
     // Read profile file
-    std::fstream currentFile;
     bool isDone = true;
 
     do {

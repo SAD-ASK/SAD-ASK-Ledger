@@ -28,8 +28,9 @@ Profile::~Profile() {
 
 
 void Profile::addTransaction() {
-    std::string description;
-    float amount;
+    std::string description = "null";
+    float amount = 0;
+
     std::string transAttribute;
     int intAttribute;
     std::string transTender;
@@ -224,8 +225,9 @@ void Profile::saveToFile() {
     if (file.is_open()) {
         for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
             file << (*i).description << "|"
-                 << (*i).amount      << "|"
-                 << (*i).tenderType  << "\n";
+                 << (*i).attribute << "|"
+                 << (*i).tenderType << "|"
+                 << (*i).amount  << "\n";
         }
     }
     file.close();
@@ -263,8 +265,9 @@ struct Transaction Profile::convertEntryToTransaction(std::string entry) {
     }
 
     t.description = vectorOfSubstrings[0];
-    t.amount = std::stof(vectorOfSubstrings[1]);
+    t.attribute = std::stoi(vectorOfSubstrings[1]);
     t.tenderType = std::stoi(vectorOfSubstrings[2]);
+    t.amount = std::stof(vectorOfSubstrings[3]);
     return t;
 
 }

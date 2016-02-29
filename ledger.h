@@ -123,8 +123,8 @@ public:
 
     /* std::string getProfileName
      */
-    std::string getFileName() {
-        return this->_fileName;
+    std::string getProfileName() {
+        return this->_profileName;
     }
 
 private:
