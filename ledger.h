@@ -6,7 +6,7 @@
 // Program info
 namespace PROGRAM {
 const std::string NAME          ("SAD-ASK-Ledger");
-const std::string VERSION       ("0.0.3");
+const std::string VERSION       ("0.0.4");
 }
 
 
@@ -61,17 +61,22 @@ public:
     void addTransaction();
 
 
-
     /* int convertStringToEnum
      * Helper function that converts string to appropriate enum structure
      */
     int convertStringToEnum(std::string attribute, int conversionType);
 
+
+    /* std::string convertEnumToString
+     * Helper function that returns enum label as a string
+     */
+    std::string convertEnumToString(int enumToConvert, int conversionType);
+
+
     /* void printTransactionList
      * prints all the transactions currently stored
      */
     void printTransactionList();
-
 
 
     /* void deleteTransaction
@@ -106,6 +111,15 @@ public:
     float getBalance(int tenderType) {
         return this->_balance[tenderType];
     }
+
+
+    /* void setBalance
+     * Set wallet balance
+     */
+    float setBalance(float amount, int tenderType) {
+        return this->_balance[tenderType] = amount;
+    }
+
 
     /* std::string getProfileName
      */
