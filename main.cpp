@@ -92,14 +92,14 @@ bool menuLoop() {
         case 'B' :
         case 'b' : {
             std::string selection;
-            int type;
-            std::cout << "What balance would you like to view?" << std::endl
-                      << "(Cash, Debit, Credit)" << std::endl;
-            printPrompt();
-            getline(std::cin, selection);
 
-            type = convertStringToEnum(selection, 1);
-            std::cout << selection << ": " << currentProfile.getBalance(type) << std::endl;
+//            std::cout << "What balance would you like to view?" << std::endl
+//                      << "(Cash, Debit, Credit)" << std::endl;
+//            printPrompt();
+//            getline(std::cin, selection);
+
+//            type = convertStringToEnum(selection, 1);
+            std::cout << selection << ": " << currentProfile.getBalance(chooseWallet()) << std::endl;
             break;
         }
 
@@ -112,17 +112,16 @@ bool menuLoop() {
         case 's' : {
             std::string selection;
             float amount = 0;
-            int type;
-            std::cout << "What balance would you like to set?" << std::endl
-                      << "(Cash, Debit, Credit)" << std::endl;
-            printPrompt();
-            getline(std::cin, selection);
+//            std::cout << "What balance would you like to set?" << std::endl
+//                      << "(Cash, Debit, Credit)" << std::endl;
+//            printPrompt();
+//            getline(std::cin, selection);
+//            type = convertStringToEnum(selection, 1);
             std::cout << "What would you like to set the balance to?" << std::endl;
             printPrompt();
             std::cin >> amount;
 
-            type = convertStringToEnum(selection, 1);
-            std::cout << selection << " is now " << currentProfile.setBalance(amount, type);
+            std::cout << selection << " is now " << currentProfile.setBalance(amount, chooseWallet());
         }
 
         case 'Q' :
@@ -246,7 +245,13 @@ std::string convertEnumToString(int enumToConvert, int conversionType) {
 
 
 int chooseWallet() {
-    return 0;
+    std::string selection;
+
+    std::cout << "Which wallet are you using?"
+              << "(Cash, Credit, Debit)" << std::endl;
+    printPrompt();
+    getline(std::cin, selection);
+    return convertStringToEnum(selection, 1);
 }
 
 int main( ) {
