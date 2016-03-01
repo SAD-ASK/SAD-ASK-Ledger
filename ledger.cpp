@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include "ledger.h"
+#include "times.h"
 
 
 Profile::Profile() :
@@ -68,6 +69,8 @@ void Profile::addTransaction() {
     t.amount = amount;
     t.attribute = intAttribute;
     t.tenderType = intTender;
+    t.creationTimestamp = createTimestamp();
+
     if (this->_transList.empty()) {
         t.id = 0;
     } else t.id = this->_transList.back().id + 1;
@@ -76,7 +79,6 @@ void Profile::addTransaction() {
     _balance[intTender] += amount;
 
     this->_unsavedEdits = true;
-    //saveToFile(t);
 }
 
 
@@ -85,7 +87,7 @@ void Profile::withdrawl() {
 }
 
 int Profile::convertStringToEnum(std::string attribute, int conversionType) {
-    std::transform( attribute.begin(), attribute.end(), std::back_inserter(attribute), ::tolower);
+    std::transform( attribute.begin(), attribute.end(), attribute.begin(), ::tolower);
     if (conversionType == 1) {
         if ( attribute == "cash" )
             return 0;
@@ -166,20 +168,23 @@ void Profile::printTransactionList() {
     const int attributeColumn = 16;
     const int walletColumn = 10;
     const int amountColumn = 10;
+    const int timestampColumn = 16;
 
     // Set decimal settings for output
     std::cout << std::fixed << std::showpoint << std::setprecision(2);
 
-    // Heading
+    // Heading, the -2 accounts for the "| " dividing each section of the table
     std::cout << "| " << std::setw(descriptionColumn - 2) << "Description"
               << "| " << std::setw(attributeColumn - 2)   << "Attribute"
               << "| " << std::setw(walletColumn - 2)        << "Wallet"
+              << "| " << std::setw(timestampColumn -2) << "Date created"
               << "| " << std::right << std::setw(amountColumn - 2) << "Amount"
               << "|" << std::endl;
 
     std::cout << "|" << std::string((descriptionColumn - 1), '-')
               << "|" << std::string((attributeColumn - 1), '-')
               << "|" << std::string((walletColumn - 1), '-')
+              << "|" << std::string((timestampColumn - 1), '-')
               << "|" << std::string((amountColumn - 1), '-')
               << "|" << std::endl;
 
@@ -187,6 +192,7 @@ void Profile::printTransactionList() {
         std::cout << "| " << std::left  << std::setw(descriptionColumn - 2) << i.description
                   << "| " << std::right << std::setw(attributeColumn - 2) << this->convertEnumToString(i.attribute, 2)
                   << "| " << std::right << std::setw(walletColumn - 2) << this->convertEnumToString(i.tenderType, 1)
+                  << "| " << std::right << std::setw(timestampColumn - 2) << getLocaltime(i.creationTimestamp)
                   << "| " << std::setw(amountColumn - 2) << std::right << i.amount << "|"
                   << std::endl;
     }
@@ -221,7 +227,6 @@ void Profile::deleteTransaction() {
 
 
 
-// ADD ATTRIBUTE TO SAVEFILE
 void Profile::saveToFile() {
     std::ofstream file;
 
@@ -231,6 +236,7 @@ void Profile::saveToFile() {
             file << (*i).description << "|"
                  << (*i).attribute << "|"
                  << (*i).tenderType << "|"
+                 << (*i).creationTimestamp << "|"
                  << (*i).amount  << "\n";
         }
     }
@@ -271,7 +277,8 @@ struct Transaction Profile::convertEntryToTransaction(std::string entry) {
     t.description = vectorOfSubstrings[0];
     t.attribute = std::stoi(vectorOfSubstrings[1]);
     t.tenderType = std::stoi(vectorOfSubstrings[2]);
-    t.amount = std::stof(vectorOfSubstrings[3]);
+    t.creationTimestamp = std::stoi(vectorOfSubstrings[3]);
+    t.amount = std::stof(vectorOfSubstrings[4]);
     return t;
 
 }

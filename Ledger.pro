@@ -5,11 +5,13 @@ CONFIG -= qt
 
 SOURCES += \
     main.cpp \
-    ledger.cpp
+    ledger.cpp \
+    times.cpp
 
 HEADERS += \
     ledger.h \
-    times.h
+    times.h \
+    main.h
 
 DISTFILES += \
     TODO \

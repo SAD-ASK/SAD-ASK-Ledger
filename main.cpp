@@ -11,7 +11,6 @@ void initialize() {
 
 
 
-
 std::string chooseProfile() {
     bool querySuccess = false;
     std::string profileName;
@@ -61,74 +60,78 @@ std::string chooseProfile() {
     return "Default";
 }
 
-bool menuLoop(Profile &currentProfile) {
+bool menuLoop() {
 
+    // Choose account
+    Profile currentProfile(chooseProfile());
     char selection;
 
-    std::cout << "Please make a selection"  << std::endl
-              << "A: Add a transaction"     << std::endl
-              << "D: Delete a transaction"  << std::endl
-              << "L: View transaction list" << std::endl
-              << "B: View account balances" << std::endl
-              << "S: Set account balances"  << std::endl
-              << "Q: Quit the program"      << std::endl;
-    printPrompt();
-    std::cin >> selection;
-    std::cin.ignore();
-
-    switch (selection) {
-    case 'A' :
-    case 'a' :
-        currentProfile.addTransaction();
-        break;
-
-    case 'D' :
-    case 'd' :
-        currentProfile.deleteTransaction();
-        break;
-
-    case 'B' :
-    case 'b' : {
-        std::string selection;
-        int type;
-        std::cout << "What balance would you like to view?" << std::endl
-                  << "(Cash, Debit, Credit)" << std::endl;
+    while (true) {
+        std::cout << "Please make a selection"  << std::endl
+                  << "A: Add a transaction"     << std::endl
+                  << "D: Delete a transaction"  << std::endl
+                  << "L: View transaction list" << std::endl
+                  << "B: View account balances" << std::endl
+                  << "S: Set account balances"  << std::endl
+                  << "Q: Quit the program"      << std::endl;
         printPrompt();
-        getline(std::cin, selection);
+        std::cin >> selection;
+        std::cin.ignore();
 
-        type = currentProfile.convertStringToEnum(selection, 1);
-        std::cout << selection << ": " << currentProfile.getBalance(type) << std::endl;
-        break;
-    }
+        switch (selection) {
+        case 'A' :
+        case 'a' :
+            currentProfile.addTransaction();
+            break;
 
-    case 'L' :
-    case 'l' :
-        currentProfile.printTransactionList();
-        break;
+        case 'D' :
+        case 'd' :
+            currentProfile.deleteTransaction();
+            break;
 
-    case 'S' :
-    case 's' : {
-        std::string selection;
-        float amount = 0;
-        int type;
-        std::cout << "What balance would you like to set?" << std::endl
-                  << "(Cash, Debit, Credit)" << std::endl;
-        printPrompt();
-        getline(std::cin, selection);
-        std::cout << "What would you like to set the balance to?" << std::endl;
-        printPrompt();
-        std::cin >> amount;
+        case 'B' :
+        case 'b' : {
+            std::string selection;
+            int type;
+            std::cout << "What balance would you like to view?" << std::endl
+                      << "(Cash, Debit, Credit)" << std::endl;
+            printPrompt();
+            getline(std::cin, selection);
 
-        type = currentProfile.convertStringToEnum(selection, 1);
-        std::cout << selection << " is now " << currentProfile.setBalance(amount, type);
-    }
+            type = currentProfile.convertStringToEnum(selection, 1);
+            std::cout << selection << ": " << currentProfile.getBalance(type) << std::endl;
+            break;
+        }
 
-    case 'Q' :
-    case 'q' :
-        return false;
+        case 'L' :
+        case 'l' :
+            currentProfile.printTransactionList();
+            break;
 
-    default:
-        return true;
+        case 'S' :
+        case 's' : {
+            std::string selection;
+            float amount = 0;
+            int type;
+            std::cout << "What balance would you like to set?" << std::endl
+                      << "(Cash, Debit, Credit)" << std::endl;
+            printPrompt();
+            getline(std::cin, selection);
+            std::cout << "What would you like to set the balance to?" << std::endl;
+            printPrompt();
+            std::cin >> amount;
+
+            type = currentProfile.convertStringToEnum(selection, 1);
+            std::cout << selection << " is now " << currentProfile.setBalance(amount, type);
+        }
+
+        case 'Q' :
+        case 'q' :
+            return false;
+
+        default:
+            return true;
+        }
     }
     return true;
 }
@@ -162,18 +165,9 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
 }
 
 
-//void printPrompt() {
-//    std::cout << "> ";
-//}
-
 void printPrompt() {
     std::cout << promptTimeFetch() << "> ";
 }
-
-void printPrompt(Profile *profile) {
-    std::cout << profile->getProfileName() << "> ";
-}
-
 
 
 int main( ) {
@@ -181,14 +175,11 @@ int main( ) {
     // Initialize settings and stuff
     initialize();
 
-    // Choose account
-    Profile currentProfile(chooseProfile());
-
     // Read profile file
     bool isDone = true;
 
     do {
-        isDone = menuLoop(currentProfile);
+        isDone = menuLoop();
     } while (isDone);
 
     return 0;
