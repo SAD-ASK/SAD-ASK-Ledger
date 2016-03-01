@@ -8,7 +8,8 @@ SOURCES += \
     ledger.cpp
 
 HEADERS += \
-    ledger.h
+    ledger.h \
+    times.h
 
 DISTFILES += \
     TODO \

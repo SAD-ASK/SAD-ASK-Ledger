@@ -60,6 +60,9 @@ public:
      */
     void addTransaction();
 
+    /* void withdrawl
+     */
+    void withdrawl();
 
     /* int convertStringToEnum
      * Helper function that converts string to appropriate enum structure
@@ -161,6 +164,7 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName);
  * Prints a consistent prompt before user input
  * Overloaded version uses profile name
  */
+//void printPrompt();
 void printPrompt();
 void printPrompt(Profile* profile);
 

@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <fstream>
 #include "ledger.h"
-
+#include "times.h"
 
 void initialize() {
     // mkdir seems to be standard for windows AND *nixes...so...
@@ -35,7 +35,7 @@ std::string chooseProfile() {
                     std::cout << "Profile name must not contain spaces" << std::endl;
                     continue;
                 }
-                if ( !(std::any_of( profileName.begin(), profileName.end(), ::isalpha))) {
+                if ( !(std::all_of( profileName.begin(), profileName.end(), ::isalpha))) {
                     std::cout << "Profile name can only contain alphabet characters!" << std::endl;
                     continue;
                 }
@@ -162,13 +162,19 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
 }
 
 
+//void printPrompt() {
+//    std::cout << "> ";
+//}
+
 void printPrompt() {
-    std::cout << "> ";
+    std::cout << promptTimeFetch() << "> ";
 }
 
 void printPrompt(Profile *profile) {
     std::cout << profile->getProfileName() << "> ";
 }
+
+
 
 int main( ) {
 

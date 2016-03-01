@@ -37,16 +37,16 @@ void Profile::addTransaction() {
     int intTender;
 
     std::cout << "What do you want to call the transaction?" << std::endl;
-    printPrompt(this);
+    printPrompt();
     getline(std::cin, description);
 
     std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl;
-    printPrompt(this);
+    printPrompt();
     std::cin >> amount;
 
     std::cout << "What type of transaction is this?" << std::endl
               << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl;
-    printPrompt(this);
+    printPrompt();
     std::cin.ignore();
     getline(std::cin, transAttribute);
 
@@ -54,7 +54,7 @@ void Profile::addTransaction() {
 
     std::cout << "What did you pay with?" << std::endl
               << "(Cash, Credit, Debit)"  << std::endl;
-    printPrompt(this);
+    printPrompt();
     getline(std::cin, transTender);
 
     std::cout << transTender << std::endl; // TEST TEST TEST TEST TEST!
@@ -79,6 +79,10 @@ void Profile::addTransaction() {
     //saveToFile(t);
 }
 
+
+void Profile::withdrawl() {
+
+}
 
 int Profile::convertStringToEnum(std::string attribute, int conversionType) {
     std::transform( attribute.begin(), attribute.end(), std::back_inserter(attribute), ::tolower);
@@ -194,7 +198,7 @@ void Profile::deleteTransaction() {
     int selection;
 
     std::cout << "What is the id number of the transaction you wish to remove?" << std::endl;
-    printPrompt(this);
+    printPrompt();
     do {
         std::cin >> selection;
         if ((selection < 1) || (selection > this->_transList.back().id)) {
