@@ -22,16 +22,7 @@ public:
      */
     void withdrawl();
 
-    /* int convertStringToEnum
-     * Helper function that converts string to appropriate enum structure
-     */
-    int convertStringToEnum(std::string attribute, int conversionType);
 
-
-    /* std::string convertEnumToString
-     * Helper function that returns enum label as a string
-     */
-    std::string convertEnumToString(int enumToConvert, int conversionType);
 
 
     /* void printTransactionList

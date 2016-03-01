@@ -98,7 +98,7 @@ bool menuLoop() {
             printPrompt();
             getline(std::cin, selection);
 
-            type = currentProfile.convertStringToEnum(selection, 1);
+            type = convertStringToEnum(selection, 1);
             std::cout << selection << ": " << currentProfile.getBalance(type) << std::endl;
             break;
         }
@@ -121,7 +121,7 @@ bool menuLoop() {
             printPrompt();
             std::cin >> amount;
 
-            type = currentProfile.convertStringToEnum(selection, 1);
+            type = convertStringToEnum(selection, 1);
             std::cout << selection << " is now " << currentProfile.setBalance(amount, type);
         }
 
@@ -169,6 +169,85 @@ void printPrompt() {
     std::cout << promptTimeFetch() << "> ";
 }
 
+int convertStringToEnum(std::string attribute, int conversionType) {
+    std::transform( attribute.begin(), attribute.end(), attribute.begin(), ::tolower);
+    if (conversionType == 1) {
+        if ( attribute == "cash" )
+            return 0;
+        if ( attribute == "credit" )
+            return 1;
+        if ( attribute == "debit" )
+            return 2;
+        else return 0;
+    }
+    if (conversionType == 2) {
+
+        if ( attribute == "novelty" )
+            return 0;
+        if ( attribute == "food" )
+            return 1;
+        if ( attribute == "restaurant" )
+            return 2;
+        if ( attribute == "clothing" )
+            return 3;
+        if ( attribute == "gas" )
+            return 4;
+        if ( attribute == "bill" )
+            return 5;
+        if ( attribute == "vice" )
+            return 6;
+        if ( attribute == "home" )
+            return 7;
+        else return 0;
+    }
+    return 0;
+}
+
+
+std::string convertEnumToString(int enumToConvert, int conversionType) {
+
+    if (conversionType == 1) {
+        switch (enumToConvert) {
+        case 0 :
+            return "Cash";
+        case 1 :
+            return "Credit";
+        case 2 :
+            return "Debit";
+        default:
+            return "null";
+        }
+    }
+
+    if (conversionType == 2) {
+        switch (enumToConvert) {
+        case 0 :
+            return "Novelty";
+        case 1 :
+            return "Food";
+        case 2 :
+            return "Restaurant";
+        case 3 :
+            return "Clothing";
+        case 4 :
+            return "Gas";
+        case 5 :
+            return "Bill";
+        case 6 :
+            return "Vice";
+        case 7 :
+            return "Home";
+        default :
+            return "null";
+        }
+    }
+    else return "null";
+}
+
+
+int chooseWallet() {
+    return 0;
+}
 
 int main( ) {
 

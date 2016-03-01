@@ -82,5 +82,23 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName);
 void printPrompt();
 
 
+
+/* int convertStringToEnum
+     * Helper function that converts string to appropriate enum structure
+     */
+int convertStringToEnum(std::string attribute, int conversionType);
+
+
+/* std::string convertEnumToString
+     * Helper function that returns enum label as a string
+     */
+std::string convertEnumToString(int enumToConvert, int conversionType);
+
+/* int chooseWallet
+ * Prompts user for "wallet" during a transaction addition
+ */
+int chooseWallet();
+
+
 #endif // MAIN_H
 

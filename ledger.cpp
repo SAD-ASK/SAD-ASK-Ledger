@@ -84,81 +84,7 @@ void Profile::addTransaction() {
 
 void Profile::withdrawl() {
 
-}
 
-int Profile::convertStringToEnum(std::string attribute, int conversionType) {
-    std::transform( attribute.begin(), attribute.end(), attribute.begin(), ::tolower);
-    if (conversionType == 1) {
-        if ( attribute == "cash" )
-            return 0;
-        if ( attribute == "credit" )
-            return 1;
-        if ( attribute == "debit" )
-            return 2;
-        else return 0;
-    }
-    if (conversionType == 2) {
-
-        if ( attribute == "novelty" )
-            return 0;
-        if ( attribute == "food" )
-            return 1;
-        if ( attribute == "restaurant" )
-            return 2;
-        if ( attribute == "clothing" )
-            return 3;
-        if ( attribute == "gas" )
-            return 4;
-        if ( attribute == "bill" )
-            return 5;
-        if ( attribute == "vice" )
-            return 6;
-        if ( attribute == "home" )
-            return 7;
-        else return 0;
-    }
-    return 0;
-}
-
-
-std::string Profile::convertEnumToString(int enumToConvert, int conversionType) {
-
-    if (conversionType == 1) {
-        switch (enumToConvert) {
-        case 0 :
-            return "Cash";
-        case 1 :
-            return "Credit";
-        case 2 :
-            return "Debit";
-        default:
-            return "null";
-        }
-    }
-
-    if (conversionType == 2) {
-        switch (enumToConvert) {
-        case 0 :
-            return "Novelty";
-        case 1 :
-            return "Food";
-        case 2 :
-            return "Restaurant";
-        case 3 :
-            return "Clothing";
-        case 4 :
-            return "Gas";
-        case 5 :
-            return "Bill";
-        case 6 :
-            return "Vice";
-        case 7 :
-            return "Home";
-        default :
-            return "null";
-        }
-    }
-    else return "null";
 }
 
 void Profile::printTransactionList() {
@@ -190,8 +116,8 @@ void Profile::printTransactionList() {
 
     for (auto &i : this->_transList) {
         std::cout << "| " << std::left  << std::setw(descriptionColumn - 2) << i.description
-                  << "| " << std::right << std::setw(attributeColumn - 2) << this->convertEnumToString(i.attribute, 2)
-                  << "| " << std::right << std::setw(walletColumn - 2) << this->convertEnumToString(i.tenderType, 1)
+                  << "| " << std::right << std::setw(attributeColumn - 2) << convertEnumToString(i.attribute, 2)
+                  << "| " << std::right << std::setw(walletColumn - 2) << convertEnumToString(i.tenderType, 1)
                   << "| " << std::right << std::setw(timestampColumn - 2) << getLocaltime(i.creationTimestamp)
                   << "| " << std::setw(amountColumn - 2) << std::right << i.amount << "|"
                   << std::endl;
