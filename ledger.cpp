@@ -29,22 +29,18 @@ Profile::~Profile() {
 
 
 void Profile::addTransaction() {
-    std::string description;
-    float amount = 0;
 
-    std::string transAttribute;
-    std::cout << "What do you want to call the transaction?" << std::endl;
-    printPrompt();
-    getline(std::cin, description);
-
+    // Calling all required functions for transaction info
+    std::string stringDescription = chooseDescription();
     float floatAmount = chooseAmount();
-
     int enumAttribute = chooseAttribute();
     int enumTender = chooseWallet();
 
 
+    // Transaction to append to vector of transactions
+    // improve?
     Transaction t;
-    t.description = description;
+    t.description = stringDescription;
     t.amount = floatAmount;
     t.attribute = enumAttribute;
     t.tenderType = enumTender;
@@ -55,7 +51,7 @@ void Profile::addTransaction() {
     } else t.id = this->_transList.back().id + 1;
 
     this->_transList.push_back(t);
-    _balance[enumTender] += amount;
+    _balance[enumTender] += floatAmount;
 
     this->_unsavedEdits = true;
 }

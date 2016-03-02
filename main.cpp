@@ -91,7 +91,6 @@ bool menuLoop() {
 
         case 'B' :
         case 'b' : {
-            std::string selection;
             std::cout << selection << ": " << currentProfile.getBalance(chooseWallet()) << std::endl;
             break;
         }
@@ -314,6 +313,34 @@ float chooseAmount() {
     }
     std::cout << "Error: Defaulted to 0. Please try again from the menu" << std::endl;
     return 0;
+}
+
+std::string chooseDescription() {
+    std::string selection;
+    std::cout << "What is the transaction description?" << std::endl;
+    printPrompt();
+    getline(std::cin, selection);
+
+    while (true) {
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cout << "Input failed, please try again." << std::endl;
+            printPrompt();
+            continue;
+        }
+        else if (std::any_of( selection.begin(), selection.end(), ::isspace) ) {
+            std::cout << "Profile name must not contain spaces" << std::endl;
+            continue;
+        }
+        else if ( !(std::all_of( selection.begin(), selection.end(), ::isalpha))) {
+            std::cout << "Profile name can only contain alphabet characters!" << std::endl;
+            continue;
+        } else {
+            return selection;
+        }
+    }
+    std::cout << "Error: Defaulted to 'null'. Please try again from the menu" << std::endl;
+    return "null";
 }
 
 int main( ) {

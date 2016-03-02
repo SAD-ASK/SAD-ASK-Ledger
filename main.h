@@ -109,6 +109,11 @@ int chooseAttribute();
  */
 float chooseAmount();
 
+/* std::string chooseDescription
+ * Prompts user for description during transaction entry
+ */
+std::string chooseDescription();
+
 
 
 #endif // MAIN_H
