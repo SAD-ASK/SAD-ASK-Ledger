@@ -29,46 +29,25 @@ Profile::~Profile() {
 
 
 void Profile::addTransaction() {
-    std::string description = "null";
+    std::string description;
     float amount = 0;
 
     std::string transAttribute;
-    int intAttribute;
-    std::string transTender;
-    int intTender;
-
     std::cout << "What do you want to call the transaction?" << std::endl;
     printPrompt();
     getline(std::cin, description);
 
-    std::cout << "How much was this transaction for? (+ for gaining $, - for spending)" << std::endl;
-    printPrompt();
-    std::cin >> amount;
+    float floatAmount = chooseAmount();
 
-    std::cout << "What type of transaction is this?" << std::endl
-              << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl;
-    printPrompt();
-    std::cin.ignore();
-    getline(std::cin, transAttribute);
-
-    intAttribute = convertStringToEnum(transAttribute, 2);
-
-    std::cout << "What did you pay with?" << std::endl
-              << "(Cash, Credit, Debit)"  << std::endl;
-    printPrompt();
-    getline(std::cin, transTender);
-
-    std::cout << transTender << std::endl; // TEST TEST TEST TEST TEST!
-    intTender = convertStringToEnum(transTender, 1);
-
-
+    int enumAttribute = chooseAttribute();
+    int enumTender = chooseWallet();
 
 
     Transaction t;
     t.description = description;
-    t.amount = amount;
-    t.attribute = intAttribute;
-    t.tenderType = intTender;
+    t.amount = floatAmount;
+    t.attribute = enumAttribute;
+    t.tenderType = enumTender;
     t.creationTimestamp = createTimestamp();
 
     if (this->_transList.empty()) {
@@ -76,7 +55,7 @@ void Profile::addTransaction() {
     } else t.id = this->_transList.back().id + 1;
 
     this->_transList.push_back(t);
-    _balance[intTender] += amount;
+    _balance[enumTender] += amount;
 
     this->_unsavedEdits = true;
 }
@@ -133,6 +112,7 @@ void Profile::deleteTransaction() {
     printPrompt();
     do {
         std::cin >> selection;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         if ((selection < 1) || (selection > this->_transList.back().id)) {
             std::cout << "Incorrect input, correct range of Ids is: ";
             std::cout << "1 - " << this->_transList.back().id << std::endl;

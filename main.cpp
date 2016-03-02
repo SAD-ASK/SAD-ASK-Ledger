@@ -76,7 +76,7 @@ bool menuLoop() {
                   << "Q: Quit the program"      << std::endl;
         printPrompt();
         std::cin >> selection;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (selection) {
         case 'A' :
@@ -92,13 +92,6 @@ bool menuLoop() {
         case 'B' :
         case 'b' : {
             std::string selection;
-
-//            std::cout << "What balance would you like to view?" << std::endl
-//                      << "(Cash, Debit, Credit)" << std::endl;
-//            printPrompt();
-//            getline(std::cin, selection);
-
-//            type = convertStringToEnum(selection, 1);
             std::cout << selection << ": " << currentProfile.getBalance(chooseWallet()) << std::endl;
             break;
         }
@@ -110,18 +103,10 @@ bool menuLoop() {
 
         case 'S' :
         case 's' : {
-            std::string selection;
-            float amount = 0;
-//            std::cout << "What balance would you like to set?" << std::endl
-//                      << "(Cash, Debit, Credit)" << std::endl;
-//            printPrompt();
-//            getline(std::cin, selection);
-//            type = convertStringToEnum(selection, 1);
-            std::cout << "What would you like to set the balance to?" << std::endl;
-            printPrompt();
-            std::cin >> amount;
+            int chosenWallet = chooseWallet();
+            int chosenAmount = chooseAmount();
 
-            std::cout << selection << " is now " << currentProfile.setBalance(amount, chooseWallet());
+            std::cout << "The chosen wallet balance" << " is now " << currentProfile.setBalance(chosenAmount, chosenWallet);
         }
 
         case 'Q' :
@@ -146,7 +131,8 @@ bool queryCreateNewProfile(std::string profileName, std::string fileName) {
                   << "(y/n)"    << std::endl;
         printPrompt();
         std::cin >> selection;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
         if ( !( (selection == 'y') | (selection == 'n') ) )
             std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
     } while ( !((selection == 'y') | (selection == 'n')) );
@@ -177,7 +163,7 @@ int convertStringToEnum(std::string attribute, int conversionType) {
             return 1;
         if ( attribute == "debit" )
             return 2;
-        else return 0;
+        else return (-1);
     }
     if (conversionType == 2) {
 
@@ -197,7 +183,7 @@ int convertStringToEnum(std::string attribute, int conversionType) {
             return 6;
         if ( attribute == "home" )
             return 7;
-        else return 0;
+        else return (-1);
     }
     return 0;
 }
@@ -250,8 +236,84 @@ int chooseWallet() {
     std::cout << "Which wallet are you using?"
               << "(Cash, Credit, Debit)" << std::endl;
     printPrompt();
-    getline(std::cin, selection);
-    return convertStringToEnum(selection, 1);
+
+    while (getline(std::cin, selection)) {
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cout << "Incorrect input, please try again" << std::endl;
+            printPrompt();
+            continue;
+        }
+        std::transform(selection.begin(), selection.end(), selection.begin(), ::tolower);
+
+        int walletEnum = convertStringToEnum(selection, 1);
+
+        if (walletEnum == (-1)) {
+            std::cout << "Text entered did not match the available wallets, please try again." << std::endl;
+            printPrompt();
+            continue;
+        } else {
+            return walletEnum;
+        }
+    }
+
+    std::cout << "Error: Choosing wallet failed. Cash chosen as default. Please try again from the menu" << std::endl;
+    return 0;
+}
+
+int chooseAttribute() {
+    std::string selection;
+
+    std::cout << "How would you like to label this transaction?"
+              << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl;
+    printPrompt();
+
+    while (getline(std::cin, selection)) {
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cout << "Incorrect input, please try again" << std::endl;
+            printPrompt();
+            continue;
+        }
+        std::transform(selection.begin(), selection.end(), selection.begin(), ::tolower);
+
+        int walletEnum = convertStringToEnum(selection, 2);
+
+        if (walletEnum == (-1)) {
+            std::cout << "Text entered did not match the available attributes, please try again." << std::endl;
+            printPrompt();
+            continue;
+        } else {
+            return walletEnum;
+        }
+    }
+
+    std::cout << "Error: Choosing wallet failed. Cash chosen as default. Please try again from the menu" << std::endl;
+    return 0;
+}
+
+float chooseAmount() {
+
+    std::string selection;
+
+    std::cout << "What amount would you like to enter?" << std::endl;
+    printPrompt();
+    while (getline(std::cin, selection)) {
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cout << "Input failed, please try again." << std::endl;
+            printPrompt();
+            continue;
+        }
+
+        for (auto& i : selection) {
+            if (!(isdigit(i)))
+                continue;
+            else return std::stof(selection);
+        }
+    }
+    std::cout << "Error: Defaulted to 0. Please try again from the menu" << std::endl;
+    return 0;
 }
 
 int main( ) {

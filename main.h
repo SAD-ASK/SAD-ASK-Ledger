@@ -95,9 +95,20 @@ int convertStringToEnum(std::string attribute, int conversionType);
 std::string convertEnumToString(int enumToConvert, int conversionType);
 
 /* int chooseWallet
- * Prompts user for "wallet" during a transaction addition
+ * Prompts user for "wallet" during transaction entry
  */
 int chooseWallet();
+
+/* int chooseAttribute
+ * Prompts user for attribute during transaction entry
+ */
+int chooseAttribute();
+
+/* float chooseAmount
+ * Prompts user for amount during transaction entry
+ */
+float chooseAmount();
+
 
 
 #endif // MAIN_H
