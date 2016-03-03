@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include "ledger.h"
+#include "main.h"
 #include "times.h"
 
 
@@ -44,7 +45,7 @@ void Profile::addTransaction() {
     t.amount = floatAmount;
     t.attribute = enumAttribute;
     t.tenderType = enumTender;
-    t.creationTimestamp = createTimestamp();
+    t.transactionTimestamp = createTimestamp();
 
     if (this->_transList.empty()) {
         t.id = 0;
@@ -57,14 +58,10 @@ void Profile::addTransaction() {
 }
 
 
-void Profile::withdrawl() {
-
-
-}
-
 void Profile::printTransactionList() {
 
     // Column width's listed by print order (subject to change)
+    const int idColumn = 4;
     const int descriptionColumn = 20;
     const int attributeColumn = 16;
     const int walletColumn = 10;
@@ -75,14 +72,16 @@ void Profile::printTransactionList() {
     std::cout << std::fixed << std::showpoint << std::setprecision(2);
 
     // Heading, the -2 accounts for the "| " dividing each section of the table
-    std::cout << "| " << std::setw(descriptionColumn - 2) << "Description"
+    std::cout << "| " << std::setw(idColumn - 2) << "ID"
+              << "| " << std::setw(descriptionColumn - 2) << "Description"
               << "| " << std::setw(attributeColumn - 2)   << "Attribute"
               << "| " << std::setw(walletColumn - 2)        << "Wallet"
               << "| " << std::setw(timestampColumn -2) << "Date created"
               << "| " << std::right << std::setw(amountColumn - 2) << "Amount"
               << "|" << std::endl;
 
-    std::cout << "|" << std::string((descriptionColumn - 1), '-')
+    std::cout << "|" << std::string((idColumn - 1), '-')
+              << "|" << std::string((descriptionColumn - 1), '-')
               << "|" << std::string((attributeColumn - 1), '-')
               << "|" << std::string((walletColumn - 1), '-')
               << "|" << std::string((timestampColumn - 1), '-')
@@ -90,10 +89,11 @@ void Profile::printTransactionList() {
               << "|" << std::endl;
 
     for (auto &i : this->_transList) {
-        std::cout << "| " << std::left  << std::setw(descriptionColumn - 2) << i.description
+        std::cout << "| " << std::left << std::setw(idColumn - 2) << i.id
+                  << "| " << std::left  << std::setw(descriptionColumn - 2) << i.description
                   << "| " << std::right << std::setw(attributeColumn - 2) << convertEnumToString(i.attribute, 2)
                   << "| " << std::right << std::setw(walletColumn - 2) << convertEnumToString(i.tenderType, 1)
-                  << "| " << std::right << std::setw(timestampColumn - 2) << getLocaltime(i.creationTimestamp)
+                  << "| " << std::right << std::setw(timestampColumn - 2) << getLocaltime(i.transactionTimestamp)
                   << "| " << std::setw(amountColumn - 2) << std::right << i.amount << "|"
                   << std::endl;
     }
@@ -103,27 +103,30 @@ void Profile::printTransactionList() {
 
 void Profile::deleteTransaction() {
     int selection;
+    bool isFound = false;
 
-    std::cout << "What is the id number of the transaction you wish to remove?" << std::endl;
-    printPrompt();
-    do {
-        std::cin >> selection;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        if ((selection < 1) || (selection > this->_transList.back().id)) {
-            std::cout << "Incorrect input, correct range of Ids is: ";
-            std::cout << "1 - " << this->_transList.back().id << std::endl;
-        }
-    } while ((selection < 1) || (selection > this->_transList.back().id));
+    while (!(isFound)) {
+        selection = chooseID();
+        for (auto &i : this->_transList) {
+            if (i.id == selection) {
+                isFound = true;
+                break;
+            }
 
-    for (auto i = this->_transList.begin(); i != this->_transList.end(); ++i) {
-        if ( (*i).id == selection ) {
-            (*i).id = 0;
+            if ((selection < 1) || (selection > this->_transList.back().id)) {
+                std::cout << "Incorrect input, correct range of Ids is: ";
+                std::cout << "1 - " << this->_transList.back().id << std::endl;
+                continue;
+            }
         }
     }
+
     // my first lambda
     this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
-                                       [](Transaction const& t) { return t.id == 0; }), this->_transList.end());
-
+                                          [this, selection](Transaction const& t)->bool {
+                               return t.id == selection; }), this->_transList.end());
+    // Reindex IDs
+    reindexID();
     this->_unsavedEdits = true;
 }
 
@@ -138,13 +141,21 @@ void Profile::saveToFile() {
             file << (*i).description << "|"
                  << (*i).attribute << "|"
                  << (*i).tenderType << "|"
-                 << (*i).creationTimestamp << "|"
+                 << (*i).transactionTimestamp << "|"
                  << (*i).amount  << "\n";
         }
     }
     file.close();
 }
 
+
+void Profile::reindexID() {
+    int idCounter = 0;
+    for (auto i = this->_transList.begin(); i != this->_transList.end(); ++i) {
+        idCounter++;
+        (*i).id = idCounter;
+    }
+}
 
 void Profile::loadFile() {
     std::ifstream file;
@@ -179,8 +190,7 @@ struct Transaction Profile::convertEntryToTransaction(std::string entry) {
     t.description = vectorOfSubstrings[0];
     t.attribute = std::stoi(vectorOfSubstrings[1]);
     t.tenderType = std::stoi(vectorOfSubstrings[2]);
-    t.creationTimestamp = std::stoi(vectorOfSubstrings[3]);
+    t.transactionTimestamp = std::stoi(vectorOfSubstrings[3]);
     t.amount = std::stof(vectorOfSubstrings[4]);
     return t;
-
 }

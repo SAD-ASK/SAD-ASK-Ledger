@@ -1,37 +1,12 @@
 #ifndef MAIN_H
 #define MAIN_H
-
+#include <string>
 
 /* Header used for general functions and datatypes not belonging to a class
  * For the moment will serve as a globals header as options/globals are at a minumum
  */
 
-// Program info
-namespace PROGRAM {
-const std::string NAME          ("SAD-ASK-Ledger");
-const std::string VERSION       ("0.0.4");
-}
 
-
-enum TENDER_TYPE {
-    CASH,
-    CREDIT,
-    DEBIT,
-    NUM_OF_TENDER
-};
-
-
-enum TRANS_ATTRIBUTE {
-    NOVELTY,
-    FOOD,
-    RESTAURANT,
-    CLOTHING,
-    GAS,
-    BILL,
-    VICE,
-    HOME,
-    NUM_OF_ATTRS
-};
 
 
 /* Transaction data type
@@ -42,8 +17,7 @@ struct Transaction {
     int id;
     int attribute;
     int tenderType;
-    unsigned int creationTimestamp;
-    unsigned int lastModifiedTimestamp;
+    unsigned int transactionTimestamp;
 };
 
 
@@ -104,6 +78,11 @@ int chooseWallet();
  */
 int chooseAttribute();
 
+/* bool isFloat
+ * Predicate function for determining if a string entered is a valid float
+ */
+bool isFloat(int character);
+
 /* float chooseAmount
  * Prompts user for amount during transaction entry
  */
@@ -113,6 +92,11 @@ float chooseAmount();
  * Prompts user for description during transaction entry
  */
 std::string chooseDescription();
+
+/* int chooseID
+ * Prompts user for id during transaction deletion
+ */
+int chooseID();
 
 
 

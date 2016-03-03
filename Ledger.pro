@@ -6,12 +6,14 @@ CONFIG -= qt
 SOURCES += \
     main.cpp \
     ledger.cpp \
-    times.cpp
+    times.cpp \
+    stats.cpp
 
 HEADERS += \
     ledger.h \
     times.h \
-    main.h
+    main.h \
+    globals.h
 
 DISTFILES += \
     TODO \

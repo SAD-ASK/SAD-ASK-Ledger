@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include "main.h"
 #include "ledger.h"
 #include "times.h"
 
@@ -287,8 +288,14 @@ int chooseAttribute() {
         }
     }
 
-    std::cout << "Error: Choosing wallet failed. Cash chosen as default. Please try again from the menu" << std::endl;
+    std::cout << "Error: Choosing attribute failed. Novelty chosen as default. Please try again from the menu." << std::endl;
     return 0;
+}
+
+bool isFloat(int character) {
+    if ((character == '.') || (isdigit(character))) {
+        return true;
+    } else return false;
 }
 
 float chooseAmount() {
@@ -305,11 +312,11 @@ float chooseAmount() {
             continue;
         }
 
-        for (auto& i : selection) {
-            if (!(isdigit(i)))
-                continue;
-            else return std::stof(selection);
-        }
+        if (!(std::all_of(selection.begin(), selection.end(), ::isFloat))) {
+            std::cout << "Input contained non-numeric characters. Please try again." << std::endl;
+            printPrompt();
+            continue;
+        } else return std::stof(selection);
     }
     std::cout << "Error: Defaulted to 0. Please try again from the menu" << std::endl;
     return 0;
@@ -319,28 +326,47 @@ std::string chooseDescription() {
     std::string selection;
     std::cout << "What is the transaction description?" << std::endl;
     printPrompt();
-    getline(std::cin, selection);
 
-    while (true) {
+    while (getline(std::cin, selection)) {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cout << "Input failed, please try again." << std::endl;
             printPrompt();
             continue;
         }
-        else if (std::any_of( selection.begin(), selection.end(), ::isspace) ) {
-            std::cout << "Profile name must not contain spaces" << std::endl;
+        if (!(std::all_of(selection.begin(), selection.end(), ::isalpha))) {
+            std::cout << "Profile name can only contain alphabetic characters!" << std::endl;
+            printPrompt();
             continue;
-        }
-        else if ( !(std::all_of( selection.begin(), selection.end(), ::isalpha))) {
-            std::cout << "Profile name can only contain alphabet characters!" << std::endl;
-            continue;
-        } else {
-            return selection;
-        }
+        } else return selection;
+
     }
     std::cout << "Error: Defaulted to 'null'. Please try again from the menu" << std::endl;
     return "null";
+}
+
+int chooseID() {
+    std::string selection;
+    std::cout << "Enter a transaction ID" << std::endl;
+    printPrompt();
+
+    while (getline(std::cin, selection)) {
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cout << "Input error. Please try again." << std::endl;
+            printPrompt();
+            continue;
+        }
+
+        if (!(std::all_of(selection.begin(), selection.end(), ::isdigit))) {
+            std::cout << "ID entered contains non-numeric characters. Please try again" << std::endl;
+            printPrompt();
+            continue;
+        } else return std::stoi(selection);
+    }
+
+    std::cout << "Error: Please try again from menu" << std::endl;
+    return (-1);
 }
 
 int main( ) {

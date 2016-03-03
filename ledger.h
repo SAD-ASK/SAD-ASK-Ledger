@@ -2,8 +2,7 @@
 #define LEDGER_H
 #include <string>
 #include <vector>
-#include "main.h"
-
+#include "globals.h"
 
 
 // Profile class
@@ -21,8 +20,6 @@ public:
     /* void withdrawl
      */
     void withdrawl();
-
-
 
 
     /* void printTransactionList
@@ -44,6 +41,10 @@ public:
     //void saveToFile(struct Transaction transaction);
     void saveToFile();
 
+    /* void reindexID
+     * Reindexes ID #'s after a deletion
+     */
+    void reindexID();
 
     /* void loadFile
      * Loads the profile's data file during object construction
@@ -78,6 +79,13 @@ public:
     std::string getProfileName() {
         return this->_profileName;
     }
+
+    // Stats section
+
+    /* float getTotalsByAttribute
+     * Returns totals of all transactions containing attribute
+     */
+    float getTotalsByAttribute(int attribute);
 
 private:
     std::string _profileName;
