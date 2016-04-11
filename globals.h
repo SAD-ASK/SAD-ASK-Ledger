@@ -1,10 +1,11 @@
 #ifndef GLOBALS
 #define GLOBALS
+#include <string>
 
 // Program info
 namespace PROGRAM {
-const std::string NAME          ("SAD-ASK-Ledger");
-const std::string VERSION       ("0.0.4");
+  const std::string NAME          ("SAD-ASK-Ledger");
+  const std::string VERSION       ("0.0.4");
 }
 
 

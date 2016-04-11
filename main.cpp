@@ -1,158 +1,22 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
+#include "globals.h"
+#include "core.h"
 #include "main.h"
-#include "ledger.h"
 #include "times.h"
 
 void initialize() {
-    // mkdir seems to be standard for windows AND *nixes...so...
-    int fSuccess = system("mkdir profiles");
-}
-
-
-
-std::string chooseProfile() {
-    bool querySuccess = false;
-    std::string profileName;
-    std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
-              << "Version: "   << PROGRAM::VERSION << std::endl;
-
-    while (true) {
-        do {
-            std::cout << "Please enter the profile name you wish to use" << std::endl
-                      << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
-                      << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl;
-            printPrompt();
-
-            if (getline(std::cin, profileName)) {
-                if (std::cin.fail()) {
-                    std::cin.clear();
-                    std::cout << "Incorrect input, try again" << std::endl;
-                    continue;
-                }
-                if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
-                    std::cout << "Profile name must not contain spaces" << std::endl;
-                    continue;
-                }
-                if ( !(std::all_of( profileName.begin(), profileName.end(), ::isalpha))) {
-                    std::cout << "Profile name can only contain alphabet characters!" << std::endl;
-                    continue;
-                }
-                else querySuccess = true;
-            }
-        } while (!querySuccess);
-
-
-        std::string fileName = "profiles/" + profileName + ".txt";
-
-        // Return if exists already
-        if (std::ifstream(fileName))
-            return profileName;
-
-        else {
-            querySuccess = queryCreateNewProfile(profileName, fileName);
-            if (querySuccess)
-                return profileName;
-        }
-    }
-
-    std::cout << "Something went wrong, Default profile loaded, please exit the program normally." << std::endl;
-    return "Default";
-}
-
-bool menuLoop() {
-
-    // Choose account
-    Profile currentProfile(chooseProfile());
-    char selection;
-
-    while (true) {
-        std::cout << "Please make a selection"  << std::endl
-                  << "A: Add a transaction"     << std::endl
-                  << "D: Delete a transaction"  << std::endl
-                  << "L: View transaction list" << std::endl
-                  << "B: View account balances" << std::endl
-                  << "S: Set account balances"  << std::endl
-                  << "Q: Quit the program"      << std::endl;
-        printPrompt();
-        std::cin >> selection;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        switch (selection) {
-        case 'A' :
-        case 'a' :
-            currentProfile.addTransaction();
-            break;
-
-        case 'D' :
-        case 'd' :
-            currentProfile.deleteTransaction();
-            break;
-
-        case 'B' :
-        case 'b' : {
-            std::cout << selection << ": " << currentProfile.getBalance(chooseWallet()) << std::endl;
-            break;
-        }
-
-        case 'L' :
-        case 'l' :
-            currentProfile.printTransactionList();
-            break;
-
-        case 'S' :
-        case 's' : {
-            int chosenWallet = chooseWallet();
-            int chosenAmount = chooseAmount();
-
-            std::cout << "The chosen wallet balance" << " is now " << currentProfile.setBalance(chosenAmount, chosenWallet);
-        }
-
-        case 'Q' :
-        case 'q' :
-            return false;
-
-        default:
-            return true;
-        }
-    }
-    return true;
-}
-
-
-bool queryCreateNewProfile(std::string profileName, std::string fileName) {
-    char selection;
-    bool profileCreated = false;
-
-    do {
-
-        std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
-                  << "(y/n)"    << std::endl;
-        printPrompt();
-        std::cin >> selection;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        if ( !( (selection == 'y') | (selection == 'n') ) )
-            std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
-    } while ( !((selection == 'y') | (selection == 'n')) );
-
-    if (selection == 'y') {
-        std::fstream file;
-        file.open(fileName, std::ios::out);
-        file << std::flush;
-        file.close();
-        profileCreated = true;
-        std::cout << "File should be created..." << std::endl;
-    }
-
-    return profileCreated;
+  // mkdir seems to be standard for windows AND *nixes...so...
+  int fSuccess = system("mkdir profiles");
 }
 
 
 void printPrompt() {
     std::cout << promptTimeFetch() << "> ";
 }
+
 
 int convertStringToEnum(std::string attribute, int conversionType) {
     std::transform( attribute.begin(), attribute.end(), attribute.begin(), ::tolower);
@@ -261,12 +125,13 @@ int chooseWallet() {
     return 0;
 }
 
+
 int chooseAttribute() {
     std::string selection;
 
     std::cout << "How would you like to label this transaction?"
               << "(Novelty,Food,Restaurant,Clothing,Gas,Bill,Vice,Home)" << std::endl;
-    printPrompt();
+    //printPrompt();
 
     while (getline(std::cin, selection)) {
         if (std::cin.fail()) {
@@ -292,11 +157,13 @@ int chooseAttribute() {
     return 0;
 }
 
+
 bool isFloat(int character) {
     if ((character == '.') || (isdigit(character))) {
         return true;
     } else return false;
 }
+
 
 float chooseAmount() {
 
@@ -322,6 +189,7 @@ float chooseAmount() {
     return 0;
 }
 
+
 std::string chooseDescription() {
     std::string selection;
     std::cout << "What is the transaction description?" << std::endl;
@@ -344,6 +212,7 @@ std::string chooseDescription() {
     std::cout << "Error: Defaulted to 'null'. Please try again from the menu" << std::endl;
     return "null";
 }
+
 
 int chooseID() {
     std::string selection;
@@ -369,17 +238,13 @@ int chooseID() {
     return (-1);
 }
 
-int main( ) {
 
-    // Initialize settings and stuff
-    initialize();
+int main(int argc, char* argv[]) {
 
-    // Read profile file
-    bool isDone = true;
+  // Initialize settings and stuff
+  initialize();
 
-    do {
-        isDone = menuLoop();
-    } while (isDone);
+  Core core;
 
-    return 0;
+  return 0;
 }

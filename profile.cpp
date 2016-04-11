@@ -3,21 +3,14 @@
 #include <iomanip>
 #include <fstream>
 #include <sstream>
-#include "ledger.h"
+#include "profile.h"
 #include "main.h"
 #include "times.h"
 
 
 Profile::Profile() :
-    _profileName("Default"),
-    _unsavedEdits(false)
-{}
-
-
-
-Profile::Profile(std::string profileName) :
-    _profileName(profileName),
-    _fileName("profiles/" + profileName + ".txt"),
+    _profileName(this->chooseProfile()),
+    _fileName("profiles/" + _profileName + ".txt"),
     _unsavedEdits(false)
 { loadFile(); }
 
@@ -28,6 +21,87 @@ Profile::~Profile() {
     }
 }
 
+
+std::string Profile::chooseProfile() {
+
+  bool querySuccess = false;
+  std::string profileName;
+  std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
+            << "Version: "   << PROGRAM::VERSION << std::endl;
+
+  while (true) {
+    do {
+      std::cout << "Please enter the profile name you wish to use" << std::endl
+                << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
+                << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl;
+      printPrompt();
+
+      if (getline(std::cin, profileName)) {
+        if (std::cin.fail()) {
+          std::cin.clear();
+          std::cout << "Incorrect input, try again" << std::endl;
+          continue;
+        }
+        if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
+          std::cout << "Profile name must not contain spaces" << std::endl;
+          continue;
+        }
+        if ( !(std::all_of( profileName.begin(), profileName.end(), ::isalpha))) {
+          std::cout << "Profile name can only contain alphabet characters!" << std::endl;
+          continue;
+        }
+        else querySuccess = true;
+      }
+    } while (!querySuccess);
+
+
+    std::string fileName = "profiles/" + profileName + ".txt";
+
+    // Return if exists already
+    if (std::ifstream(fileName))
+        return profileName;
+      //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
+
+    else {
+      querySuccess = this->queryCreateNewProfile(profileName, fileName);
+      if (querySuccess)
+          return profileName;
+          //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
+    }
+  }
+
+  std::cout << "Something went wrong, Default profile loaded, please exit the program normally." << std::endl;
+  return "Default";
+  //loadedProfile = std::unique_ptr<Profile>(new Profile());
+}
+
+bool Profile::queryCreateNewProfile(std::string profileName, std::string fileName) {
+    char selection;
+    bool profileCreated = false;
+
+    do {
+
+        std::cout << "Profile " << profileName << " does not exist, create?" << std::endl
+                  << "(y/n)"    << std::endl;
+        printPrompt();
+        std::cin >> selection;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if ( !( (selection == 'y') | (selection == 'n') ) )
+            std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
+    } while ( !((selection == 'y') | (selection == 'n')) );
+
+    if (selection == 'y') {
+        std::fstream file;
+        file.open(fileName, std::ios::out);
+        file << std::flush;
+        file.close();
+        profileCreated = true;
+        std::cout << "File should be created..." << std::endl;
+    }
+
+    return profileCreated;
+}
 
 void Profile::addTransaction() {
 
@@ -125,8 +199,6 @@ void Profile::deleteTransaction() {
     this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
                                           [this, selection](Transaction const& t)->bool {
                                return t.id == selection; }), this->_transList.end());
-    // Reindex IDs
-    reindexID();
     this->_unsavedEdits = true;
 }
 
@@ -135,15 +207,15 @@ void Profile::deleteTransaction() {
 void Profile::saveToFile() {
     std::ofstream file;
 
-    file.open(this->_fileName,std::ios::trunc);
+    file.open(this->_fileName.c_str(),std::ios::trunc);
     if (file.is_open()) {
-        for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
-            file << (*i).description << "|"
-                 << (*i).attribute << "|"
-                 << (*i).tenderType << "|"
-                 << (*i).transactionTimestamp << "|"
-                 << (*i).amount  << "\n";
-        }
+      for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
+        file << (*i).description << "|"
+             << (*i).attribute << "|"
+             << (*i).tenderType << "|"
+             << (*i).transactionTimestamp << "|"
+             << (*i).amount  << "\n";
+      }
     }
     file.close();
 }

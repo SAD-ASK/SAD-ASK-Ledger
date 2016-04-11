@@ -5,15 +5,17 @@ CONFIG -= qt
 
 SOURCES += \
     main.cpp \
-    ledger.cpp \
     times.cpp \
-    stats.cpp
+    stats.cpp \
+    core.cpp \
+    profile.cpp
 
 HEADERS += \
-    ledger.h \
     times.h \
     main.h \
-    globals.h
+    globals.h \
+    core.h \
+    profile.h
 
 DISTFILES += \
     TODO \

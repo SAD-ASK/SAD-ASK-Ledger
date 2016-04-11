@@ -1,23 +1,25 @@
 #ifndef MAIN_H
 #define MAIN_H
+
+#include "profile.h"
+
 #include <string>
+#include <memory>
 
 /* Header used for general functions and datatypes not belonging to a class
  * For the moment will serve as a globals header as options/globals are at a minumum
  */
 
 
-
-
 /* Transaction data type
  */
 struct Transaction {
-    std::string description = "Transaction";
-    float amount = 0;
-    int id;
-    int attribute;
-    int tenderType;
-    unsigned int transactionTimestamp;
+  std::string description = "Transaction";
+  float amount = 0;
+  int id;
+  int attribute;
+  int tenderType;
+  unsigned int transactionTimestamp;
 };
 
 
@@ -27,46 +29,20 @@ struct Transaction {
 void initialize();
 
 
-/* std::string chooseProfile
- * Prompts user for Profile name and returns it
- */
-std::string chooseProfile();
-
-
-/* bool menuLoop
- * Accepts reference to active profile object
- * Returns false when user has opted to quit
- */
-bool menuLoop();
-
-
-/* bool queryCreateNewProfile(std::string)
- * Handles creating new profile if selected one doesn't exist
- * Returns true if new profile created, false if not
- */
-bool queryCreateNewProfile(std::string profileName, std::string fileName);
-
-
-
-/* void printPrompt
- * Prints a consistent prompt before user input
- * Overloaded version uses profile name
- */
-//void printPrompt();
-void printPrompt();
-
-
+// Enum Helpers
 
 /* int convertStringToEnum
-     * Helper function that converts string to appropriate enum structure
-     */
+ * Helper function that converts string to appropriate enum structure
+ */
 int convertStringToEnum(std::string attribute, int conversionType);
 
-
 /* std::string convertEnumToString
-     * Helper function that returns enum label as a string
-     */
+ * Helper function that returns enum label as a string
+ */
 std::string convertEnumToString(int enumToConvert, int conversionType);
+
+
+// Input handlers/checkers
 
 /* int chooseWallet
  * Prompts user for "wallet" during transaction entry
@@ -98,6 +74,9 @@ std::string chooseDescription();
  */
 int chooseID();
 
+
+// Prints prior to input, calls current time
+void printPrompt();
 
 
 #endif // MAIN_H

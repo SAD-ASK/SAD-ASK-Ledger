@@ -1,5 +1,5 @@
 #include "main.h"
-#include "ledger.h"
+#include "profile.h"
 
 float Profile::getTotalsByAttribute(int attribute) {
     float total = 0;
