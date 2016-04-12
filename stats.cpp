@@ -1,4 +1,4 @@
-#include "main.h"
+#include "globals.h"
 #include "profile.h"
 
 float Profile::getTotalsByAttribute(int attribute) {

@@ -24,55 +24,54 @@ Profile::~Profile() {
 
 std::string Profile::chooseProfile() {
 
-  bool querySuccess = false;
-  std::string profileName;
-  std::cout << "Welcome to " << PROGRAM::NAME    << std::endl
-            << "Version: "   << PROGRAM::VERSION << std::endl;
+    bool querySuccess = false;
+    std::string profileName;
+    std::cout << "Welcome to " << Globals::NAME    << std::endl
+              << "Version: "   << Globals::VERSION << std::endl;
 
-  while (true) {
-    do {
-      std::cout << "Please enter the profile name you wish to use" << std::endl
-                << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
-                << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl;
-      printPrompt();
+    while (true) {
+        do {
+            std::cout << "Please enter the profile name you wish to use" << std::endl
+                      << "(if entered profile name does not exist, you will be prompted to create it)." << std::endl
+                      << "For simplicity's sake, the profile name must be only alphabetic characters, no spaces!" << std::endl;
+            printPrompt();
 
-      if (getline(std::cin, profileName)) {
-        if (std::cin.fail()) {
-          std::cin.clear();
-          std::cout << "Incorrect input, try again" << std::endl;
-          continue;
+            if (getline(std::cin, profileName)) {
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cout << "Incorrect input, try again" << std::endl;
+                    continue;
+                }
+                if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
+                    std::cout << "Profile name must not contain spaces" << std::endl;
+                    continue;
+                }
+                if ( !(std::all_of( profileName.begin(), profileName.end(), ::isalpha))) {
+                    std::cout << "Profile name can only contain alphabet characters!" << std::endl;
+                    continue;
+                }
+                else querySuccess = true;
+            }
+        } while (!querySuccess);
+
+
+        std::string fileName = "profiles/" + profileName + ".txt";
+
+        // Return if exists already
+        if (std::ifstream(fileName))
+            return profileName;
+        //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
+
+        else {
+            querySuccess = this->queryCreateNewProfile(profileName, fileName);
+            if (querySuccess)
+                return profileName;
+            //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
         }
-        if (std::any_of( profileName.begin(), profileName.end(), ::isspace) ) {
-          std::cout << "Profile name must not contain spaces" << std::endl;
-          continue;
-        }
-        if ( !(std::all_of( profileName.begin(), profileName.end(), ::isalpha))) {
-          std::cout << "Profile name can only contain alphabet characters!" << std::endl;
-          continue;
-        }
-        else querySuccess = true;
-      }
-    } while (!querySuccess);
-
-
-    std::string fileName = "profiles/" + profileName + ".txt";
-
-    // Return if exists already
-    if (std::ifstream(fileName))
-        return profileName;
-      //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
-
-    else {
-      querySuccess = this->queryCreateNewProfile(profileName, fileName);
-      if (querySuccess)
-          return profileName;
-          //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
     }
-  }
 
-  std::cout << "Something went wrong, Default profile loaded, please exit the program normally." << std::endl;
-  return "Default";
-  //loadedProfile = std::unique_ptr<Profile>(new Profile());
+    std::cout << "Something went wrong, Default profile loaded, please exit the program normally." << std::endl;
+    return "Default";
 }
 
 bool Profile::queryCreateNewProfile(std::string profileName, std::string fileName) {
@@ -114,7 +113,7 @@ void Profile::addTransaction() {
 
     // Transaction to append to vector of transactions
     // improve?
-    Transaction t;
+    Globals::Transaction t;
     t.description = stringDescription;
     t.amount = floatAmount;
     t.attribute = enumAttribute;
@@ -197,8 +196,8 @@ void Profile::deleteTransaction() {
 
     // my first lambda
     this->_transList.erase(std::remove_if(this->_transList.begin(), this->_transList.end(),
-                                          [this, selection](Transaction const& t)->bool {
-                               return t.id == selection; }), this->_transList.end());
+                                          [this, selection](Globals::Transaction const& t)->bool {
+        return t.id == selection; }), this->_transList.end());
     this->_unsavedEdits = true;
 }
 
@@ -209,13 +208,13 @@ void Profile::saveToFile() {
 
     file.open(this->_fileName.c_str(),std::ios::trunc);
     if (file.is_open()) {
-      for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
-        file << (*i).description << "|"
-             << (*i).attribute << "|"
-             << (*i).tenderType << "|"
-             << (*i).transactionTimestamp << "|"
-             << (*i).amount  << "\n";
-      }
+        for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
+            file << (*i).description << "|"
+                 << (*i).attribute << "|"
+                 << (*i).tenderType << "|"
+                 << (*i).transactionTimestamp << "|"
+                 << (*i).amount  << "\n";
+        }
     }
     file.close();
 }
@@ -238,7 +237,7 @@ void Profile::loadFile() {
     if (file.is_open()) {
         while (getline(file,entry)) {
             idNumberCounter++;
-            this->_transList.push_back(convertEntryToTransaction(entry));
+            this->_transList.push_back(this->convertEntryToTransaction(entry));
             this->_transList.back().id = idNumberCounter;
         }
         for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
@@ -248,9 +247,9 @@ void Profile::loadFile() {
 }
 
 
-struct Transaction Profile::convertEntryToTransaction(std::string entry) {
+struct Globals::Transaction Profile::convertEntryToTransaction(std::string entry) {
 
-    Transaction t;
+    Globals::Transaction t;
     std::vector<std::string> vectorOfSubstrings;
     std::string tempString;
     std::istringstream ss(entry);

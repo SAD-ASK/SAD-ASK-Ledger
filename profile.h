@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "globals.h"
 
+#include "globals.h"
 
 // Profile class
 class Profile {
@@ -55,7 +55,8 @@ public:
     /* struct Transaction convertEntryToTransaction
      * Helper function that converts Entry string in loadFile() to a Transaction data structure for loading
      */
-    struct Transaction convertEntryToTransaction(std::string entry);
+    // NEEDS WORK
+    struct Globals::Transaction convertEntryToTransaction(std::string entry);
 
 
     /* float getBalance
@@ -81,8 +82,8 @@ public:
     }
 
     void setProfileName(std::string newFilename) {
-      this->_fileName = newFilename;
-      
+        this->_fileName = newFilename;
+
     }
 
     // Stats section
@@ -92,10 +93,10 @@ public:
      */
     float getTotalsByAttribute(int attribute);
 
- private:
+private:
     std::string _profileName;
-    std::vector<Transaction> _transList;
-    float _balance[NUM_OF_TENDER] = {0};
+    std::vector<Globals::Transaction> _transList;
+    float _balance[Globals::NUM_OF_TENDER] = {0};
     std::string _fileName;
     bool _unsavedEdits = false;
 };

@@ -2,21 +2,19 @@
 #define GLOBALS
 #include <string>
 
-// Program info
-namespace PROGRAM {
-  const std::string NAME          ("SAD-ASK-Ledger");
-  const std::string VERSION       ("0.0.4");
-}
+namespace Globals {
 
+// Program Information
+static std::string NAME("SAD-ASK-Ledger");
+static std::string VERSION("0.1.0");
 
+// Enums
 enum TENDER_TYPE {
     CASH,
     CREDIT,
     DEBIT,
     NUM_OF_TENDER
 };
-
-
 enum TRANS_ATTRIBUTE {
     NOVELTY,
     FOOD,
@@ -28,5 +26,18 @@ enum TRANS_ATTRIBUTE {
     HOME,
     NUM_OF_ATTRS
 };
+
+// Transaction data type
+struct Transaction {
+    std::string description = "Transaction";
+    float amount = 0;
+    int id;
+    int attribute;
+    int tenderType;
+    unsigned int transactionTimestamp;
+};
+}; // End Namespace
+
+
 #endif // GLOBALS
 

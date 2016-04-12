@@ -12,6 +12,9 @@ public:
     Core();
     ~Core();
 
+    // Initializes settings and stuff
+    void initialize();
+
     // Starts main menu
     void menuLoop();
 

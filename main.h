@@ -6,27 +6,9 @@
 #include <string>
 #include <memory>
 
-/* Header used for general functions and datatypes not belonging to a class
- * For the moment will serve as a globals header as options/globals are at a minumum
- */
+// Header used for general functions and datatypes not belonging to a class
 
 
-/* Transaction data type
- */
-struct Transaction {
-  std::string description = "Transaction";
-  float amount = 0;
-  int id;
-  int attribute;
-  int tenderType;
-  unsigned int transactionTimestamp;
-};
-
-
-/* void initialize()
- * Initializes stuff. Only checks profile folder status atm
- */
-void initialize();
 
 
 // Enum Helpers

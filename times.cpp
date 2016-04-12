@@ -1,6 +1,6 @@
+#include "times.h"
 #include <ctime>
 #include <iomanip>
-#include "times.h"
 
 std::string promptTimeFetch() {
     char timeString[24];

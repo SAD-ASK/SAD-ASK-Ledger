@@ -5,12 +5,10 @@
 #include "globals.h"
 #include "core.h"
 #include "main.h"
+
+// for printPrompt
 #include "times.h"
 
-void initialize() {
-  // mkdir seems to be standard for windows AND *nixes...so...
-  int fSuccess = system("mkdir profiles");
-}
 
 
 void printPrompt() {
@@ -241,10 +239,7 @@ int chooseID() {
 
 int main(int argc, char* argv[]) {
 
-  // Initialize settings and stuff
-  initialize();
+    Core core;
 
-  Core core;
-
-  return 0;
+    return 0;
 }
