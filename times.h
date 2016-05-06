@@ -8,7 +8,7 @@
 std::string promptTimeFetch();
 
 
-/* std::size_t createTimestamp
+/* unsigned int createTimestamp
  * returns unix timestamp
  */
 unsigned int createTimestamp();
@@ -17,6 +17,11 @@ unsigned int createTimestamp();
  * returns localtime, included in header to avoid unnecessary includes in other files
  */
 std::string getLocaltime(unsigned int timestamp);
+
+/* unsigned int convertDateToTimestamp
+ * Converts a date string to unix timestamp
+ */
+unsigned int convertDateToTimestamp(std::string date);
 
 #endif // TIMES
 

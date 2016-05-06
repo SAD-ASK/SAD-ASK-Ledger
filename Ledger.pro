@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++11
+CONFIG += console c++0x
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -8,14 +8,17 @@ SOURCES += \
     times.cpp \
     stats.cpp \
     core.cpp \
-    profile.cpp
+    profile.cpp \
+    input.cpp \
+    help.cpp
 
 HEADERS += \
     times.h \
-    main.h \
     globals.h \
     core.h \
-    profile.h
+    profile.h \
+    input.h \
+    help.h
 
 DISTFILES += \
     TODO \

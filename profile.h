@@ -16,17 +16,18 @@ public:
     // Calls queryCreateNewProfile if necessary
     std::string chooseProfile();
 
-    bool queryCreateNewProfile(std::string profileName, std::string fileName);
+    bool queryCreateNewProfile( std::string profileName, std::string fileName );
 
     /* void addTransaction
      * Adds a transaction to the vector
      */
     void addTransaction();
 
-    // Unimplemented
-    void withdrawl();
 
-
+    /* void printTransactionList
+     * Does what you think it does
+     * Uses calculated values from helper functions to determine necessary column sizes
+     */
     void printTransactionList();
 
 
@@ -41,10 +42,6 @@ public:
      */
     void saveToFile();
 
-    /* void reindexID
-     * Reindexes ID #'s after a deletion
-     */
-    void reindexID();
 
     /* void loadFile
      * Loads the profile's data file during object construction
@@ -56,13 +53,13 @@ public:
      * Helper function that converts Entry string in loadFile() to a Transaction data structure for loading
      */
     // NEEDS WORK
-    struct Globals::Transaction convertEntryToTransaction(std::string entry);
+    struct Globals::Transaction convertEntryToTransaction( std::string entry );
 
 
     /* float getBalance
      * Returns wallet balance
      */
-    float getBalance(int tenderType) {
+    float getBalance( int tenderType ) {
         return this->_balance[tenderType];
     }
 
@@ -70,7 +67,7 @@ public:
     /* void setBalance
      * Set wallet balance
      */
-    float setBalance(float amount, int tenderType) {
+    float setBalance( float amount, int tenderType ) {
         return this->_balance[tenderType] = amount;
     }
 
@@ -81,7 +78,7 @@ public:
         return this->_profileName;
     }
 
-    void setProfileName(std::string newFilename) {
+    void setProfileName( std::string newFilename ) {
         this->_fileName = newFilename;
 
     }
@@ -91,14 +88,20 @@ public:
     /* float getTotalsByAttribute
      * Returns totals of all transactions containing attribute
      */
-    float getTotalsByAttribute(int attribute);
+    float getTotalsByAttribute( int attribute );
+
+
+    /* void printStats
+     * Experimental menu of common/useful stats
+     */
+    void printStats();
 
 private:
     std::string _profileName;
     std::vector<Globals::Transaction> _transList;
-    float _balance[Globals::NUM_OF_TENDER] = {0};
+    float _balance[Globals::WALLET_TYPE::NUM_OF_WALLETS] = {0};
     std::string _fileName;
-    bool _unsavedEdits = false;
+    bool _unsavedEdits;
 };
 
 

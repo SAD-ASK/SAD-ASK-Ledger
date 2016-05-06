@@ -18,6 +18,7 @@ public:
     // Starts main menu
     void menuLoop();
 
+
 private:
     Profile loadedProfile;
 

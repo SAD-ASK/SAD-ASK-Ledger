@@ -52,12 +52,16 @@ SOURCES       = main.cpp \
 		times.cpp \
 		stats.cpp \
 		core.cpp \
-		profile.cpp 
+		profile.cpp \
+		input.cpp \
+		help.cpp 
 OBJECTS       = main.o \
 		times.o \
 		stats.o \
 		core.o \
-		profile.o
+		profile.o \
+		input.o \
+		help.o
 DIST          = TODO \
 		NOTES \
 		README.md \
@@ -88,6 +92,10 @@ DIST          = TODO \
 		/usr/lib/qt/mkspecs/modules/qt_lib_help_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_location.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_location_private.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimedia.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimedia_private.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimediawidgets.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimediawidgets_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_network.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_network_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_opengl.pri \
@@ -104,6 +112,7 @@ DIST          = TODO \
 		/usr/lib/qt/mkspecs/modules/qt_lib_qmldevtools_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_qmltest.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_qmltest_private.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_quick.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_quick_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_quickparticles_private.pri \
@@ -149,14 +158,17 @@ DIST          = TODO \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
 		Ledger.pro times.h \
-		main.h \
 		globals.h \
 		core.h \
-		profile.h main.cpp \
+		profile.h \
+		input.h \
+		help.h main.cpp \
 		times.cpp \
 		stats.cpp \
 		core.cpp \
-		profile.cpp
+		profile.cpp \
+		input.cpp \
+		help.cpp
 QMAKE_TARGET  = Ledger
 DESTDIR       = 
 TARGET        = Ledger
@@ -195,6 +207,10 @@ Makefile: Ledger.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspec
 		/usr/lib/qt/mkspecs/modules/qt_lib_help_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_location.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_location_private.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimedia.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimedia_private.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimediawidgets.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_multimediawidgets_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_network.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_network_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_opengl.pri \
@@ -211,6 +227,7 @@ Makefile: Ledger.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspec
 		/usr/lib/qt/mkspecs/modules/qt_lib_qmldevtools_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_qmltest.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_qmltest_private.pri \
+		/usr/lib/qt/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_quick.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_quick_private.pri \
 		/usr/lib/qt/mkspecs/modules/qt_lib_quickparticles_private.pri \
@@ -284,6 +301,10 @@ Makefile: Ledger.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspec
 /usr/lib/qt/mkspecs/modules/qt_lib_help_private.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_location.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_location_private.pri:
+/usr/lib/qt/mkspecs/modules/qt_lib_multimedia.pri:
+/usr/lib/qt/mkspecs/modules/qt_lib_multimedia_private.pri:
+/usr/lib/qt/mkspecs/modules/qt_lib_multimediawidgets.pri:
+/usr/lib/qt/mkspecs/modules/qt_lib_multimediawidgets_private.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_network.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_network_private.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_opengl.pri:
@@ -300,6 +321,7 @@ Makefile: Ledger.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspec
 /usr/lib/qt/mkspecs/modules/qt_lib_qmldevtools_private.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_qmltest.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_qmltest_private.pri:
+/usr/lib/qt/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_quick.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_quick_private.pri:
 /usr/lib/qt/mkspecs/modules/qt_lib_quickparticles_private.pri:
@@ -385,30 +407,41 @@ compiler_clean:
 
 ####### Compile
 
-main.o: main.cpp globals.h \
-		main.h \
+main.o: main.cpp core.h \
 		profile.h \
-		times.h
+		globals.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 times.o: times.cpp times.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o times.o times.cpp
 
-stats.o: stats.cpp main.h \
+stats.o: stats.cpp globals.h \
 		profile.h \
-		globals.h
+		input.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stats.o stats.cpp
 
 core.o: core.cpp core.h \
 		profile.h \
-		globals.h
+		globals.h \
+		input.h \
+		help.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o core.o core.cpp
 
 profile.o: profile.cpp profile.h \
 		globals.h \
-		main.h \
-		times.h
+		times.h \
+		input.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o profile.o profile.cpp
+
+input.o: input.cpp input.h \
+		globals.h \
+		times.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o input.o input.cpp
+
+help.o: help.cpp globals.h \
+		help.h \
+		input.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o help.o help.cpp
 
 ####### Install
 

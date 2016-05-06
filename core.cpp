@@ -1,5 +1,6 @@
 #include "core.h"
-#include "main.h"
+#include "input.h"
+#include "help.h"
 
 #include <iostream>
 #include <limits>
@@ -9,11 +10,13 @@ Core::Core() {
     this->menuLoop();
 }
 
-Core::~Core() {}
+Core::~Core() {
+    std::cout << "Goodbye!" << std::endl;
+}
+
 
 
 void Core::initialize() {
-    // God I wish std::filesystem was standard...easiest solution for now
     int fSuccess = system("mkdir profiles");
 }
 
@@ -22,14 +25,18 @@ void Core::menuLoop() {
 
     // Choose account
     char selection;
+    std::cout << "Welcome to " << Globals::NAME    << std::endl
+              << "Version: "   << Globals::VERSION << std::endl;
 
     while (true) {
         std::cout << "Please make a selection"  << std::endl
                   << "A: Add a transaction"     << std::endl
                   << "D: Delete a transaction"  << std::endl
                   << "L: View transaction list" << std::endl
-                  << "B: View account balances" << std::endl
-                  << "S: Set account balances"  << std::endl
+                  << "S: View stats screen"     << std::endl
+                  << "B: Set account balances"  << std::endl
+                  << "R: Debug regex"           << std::endl
+                  << "H: View help"             << std::endl
                   << "Q: Quit the program"      << std::endl;
         printPrompt();
         std::cin >> selection;
@@ -43,15 +50,8 @@ void Core::menuLoop() {
 
         case 'D' :
         case 'd' :
-            loadedProfile.addTransaction();
+            loadedProfile.deleteTransaction();
             break;
-
-        case 'B' :
-        case 'b' : {
-            // This options is only present for testing
-            std::cout << selection << ": " << loadedProfile.getBalance(chooseWallet()) << std::endl;
-            continue;
-        }
 
         case 'L' :
         case 'l' :
@@ -59,7 +59,13 @@ void Core::menuLoop() {
             continue;
 
         case 'S' :
-        case 's' : {
+        case 's' :
+            loadedProfile.printStats();
+            continue;
+
+
+        case 'B' :
+        case 'b' : {
             int chosenWallet = chooseWallet();
             int chosenAmount = chooseAmount();
 
@@ -67,9 +73,20 @@ void Core::menuLoop() {
             continue;
         }
 
+        case 'R' :
+        case 'r' : {
+          int whocares = chooseTimestamp();
+          break;
+        }
+
+        case 'H' :
+        case 'h' :
+            printHelpMenu();
+            continue;
+
         case 'Q' :
         case 'q' :
-            break;
+            return;
 
         default:
             continue;

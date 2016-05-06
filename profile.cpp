@@ -4,8 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include "profile.h"
-#include "main.h"
 #include "times.h"
+#include "input.h"
 
 
 Profile::Profile() :
@@ -26,8 +26,6 @@ std::string Profile::chooseProfile() {
 
     bool querySuccess = false;
     std::string profileName;
-    std::cout << "Welcome to " << Globals::NAME    << std::endl
-              << "Version: "   << Globals::VERSION << std::endl;
 
     while (true) {
         do {
@@ -47,7 +45,7 @@ std::string Profile::chooseProfile() {
                     continue;
                 }
                 if ( !(std::all_of( profileName.begin(), profileName.end(), ::isalpha))) {
-                    std::cout << "Profile name can only contain alphabet characters!" << std::endl;
+                    std::cout << "Profile name can only contain alphabetic characters!" << std::endl;
                     continue;
                 }
                 else querySuccess = true;
@@ -60,13 +58,11 @@ std::string Profile::chooseProfile() {
         // Return if exists already
         if (std::ifstream(fileName))
             return profileName;
-        //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
 
         else {
             querySuccess = this->queryCreateNewProfile(profileName, fileName);
             if (querySuccess)
                 return profileName;
-            //loadedProfile = std::unique_ptr<Profile>(new Profile(profileName));
         }
     }
 
@@ -86,9 +82,9 @@ bool Profile::queryCreateNewProfile(std::string profileName, std::string fileNam
         std::cin >> selection;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        if ( !( (selection == 'y') | (selection == 'n') ) )
+        if ( !( (selection == 'y') || (selection == 'n') ) )
             std::cout << "Incorrect input, please enter y or n to answer" << std::endl;
-    } while ( !((selection == 'y') | (selection == 'n')) );
+    } while ( !((selection == 'y') || (selection == 'n')) );
 
     if (selection == 'y') {
         std::fstream file;
@@ -104,20 +100,13 @@ bool Profile::queryCreateNewProfile(std::string profileName, std::string fileNam
 
 void Profile::addTransaction() {
 
-    // Calling all required functions for transaction info
-    std::string stringDescription = chooseDescription();
-    float floatAmount = chooseAmount();
-    int enumAttribute = chooseAttribute();
-    int enumTender = chooseWallet();
-
-
     // Transaction to append to vector of transactions
     // improve?
     Globals::Transaction t;
-    t.description = stringDescription;
-    t.amount = floatAmount;
-    t.attribute = enumAttribute;
-    t.tenderType = enumTender;
+    t.description = chooseDescription();
+    t.amount = chooseAmount();
+    t.attribute = chooseAttribute();
+    t.walletType = chooseWallet();
     t.transactionTimestamp = createTimestamp();
 
     if (this->_transList.empty()) {
@@ -125,7 +114,7 @@ void Profile::addTransaction() {
     } else t.id = this->_transList.back().id + 1;
 
     this->_transList.push_back(t);
-    _balance[enumTender] += floatAmount;
+    _balance[t.walletType] += t.amount;
 
     this->_unsavedEdits = true;
 }
@@ -136,7 +125,7 @@ void Profile::printTransactionList() {
     // Column width's listed by print order (subject to change)
     const int idColumn = 4;
     const int descriptionColumn = 20;
-    const int attributeColumn = 16;
+    const int attributeColumn = 15;
     const int walletColumn = 10;
     const int amountColumn = 10;
     const int timestampColumn = 16;
@@ -145,29 +134,36 @@ void Profile::printTransactionList() {
     std::cout << std::fixed << std::showpoint << std::setprecision(2);
 
     // Heading, the -2 accounts for the "| " dividing each section of the table
-    std::cout << "| " << std::setw(idColumn - 2) << "ID"
-              << "| " << std::setw(descriptionColumn - 2) << "Description"
-              << "| " << std::setw(attributeColumn - 2)   << "Attribute"
-              << "| " << std::setw(walletColumn - 2)        << "Wallet"
-              << "| " << std::setw(timestampColumn -2) << "Date created"
-              << "| " << std::right << std::setw(amountColumn - 2) << "Amount"
+    std::cout << "| " << std::setw( idColumn          - 2 ) << "ID"
+              << "| " << std::setw( descriptionColumn - 2 ) << "Description"
+              << "| " << std::setw( attributeColumn   - 2 ) << "Attribute"
+              << "| " << std::setw( walletColumn      - 2 ) << "Wallet"
+              << "| " << std::setw( timestampColumn   - 2 ) << "Date created"
+              << "| " << std::setw( amountColumn      - 2 ) << "Amount"
               << "|" << std::endl;
 
-    std::cout << "|" << std::string((idColumn - 1), '-')
-              << "|" << std::string((descriptionColumn - 1), '-')
-              << "|" << std::string((attributeColumn - 1), '-')
-              << "|" << std::string((walletColumn - 1), '-')
-              << "|" << std::string((timestampColumn - 1), '-')
-              << "|" << std::string((amountColumn - 1), '-')
+    std::cout << "|" << std::string( ( idColumn          - 1 ), '-' )
+              << "|" << std::string( ( descriptionColumn - 1 ), '-' )
+              << "|" << std::string( ( attributeColumn   - 1 ), '-' )
+              << "|" << std::string( ( walletColumn      - 1 ), '-' )
+              << "|" << std::string( ( timestampColumn   - 1 ), '-' )
+              << "|" << std::string( ( amountColumn      - 1 ), '-' )
               << "|" << std::endl;
 
     for (auto &i : this->_transList) {
-        std::cout << "| " << std::left << std::setw(idColumn - 2) << i.id
-                  << "| " << std::left  << std::setw(descriptionColumn - 2) << i.description
-                  << "| " << std::right << std::setw(attributeColumn - 2) << convertEnumToString(i.attribute, 2)
-                  << "| " << std::right << std::setw(walletColumn - 2) << convertEnumToString(i.tenderType, 1)
-                  << "| " << std::right << std::setw(timestampColumn - 2) << getLocaltime(i.transactionTimestamp)
-                  << "| " << std::setw(amountColumn - 2) << std::right << i.amount << "|"
+        std::cout << "| " << std::left  << std::setw( idColumn          - 2 )
+                  << i.id
+                  << "| " << std::left  << std::setw( descriptionColumn - 2 )
+                  << i.description
+                  << "| " << std::right << std::setw( attributeColumn   - 2 )
+                  //<< convertEnumToString( i.attribute, 2 )
+                  << Globals::attributeList[i.attribute]
+                  << "| " << std::right << std::setw( walletColumn      - 2 )
+                  //<< convertEnumToString( i.walletType, 1 )
+                  << Globals::walletList[i.walletType]
+                  << "| " << std::right << std::setw( timestampColumn   - 2 )
+                  << getLocaltime( i.transactionTimestamp )
+                  << "| " << std::setw( amountColumn - 2 ) << std::right << i.amount << "|"
                   << std::endl;
     }
 }
@@ -211,7 +207,7 @@ void Profile::saveToFile() {
         for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
             file << (*i).description << "|"
                  << (*i).attribute << "|"
-                 << (*i).tenderType << "|"
+                 << (*i).walletType << "|"
                  << (*i).transactionTimestamp << "|"
                  << (*i).amount  << "\n";
         }
@@ -220,18 +216,11 @@ void Profile::saveToFile() {
 }
 
 
-void Profile::reindexID() {
-    int idCounter = 0;
-    for (auto i = this->_transList.begin(); i != this->_transList.end(); ++i) {
-        idCounter++;
-        (*i).id = idCounter;
-    }
-}
-
 void Profile::loadFile() {
     std::ifstream file;
     std::string entry;
     int idNumberCounter = 0;
+    unsigned int longestDescription = 0;
 
     file.open(this->_fileName);
     if (file.is_open()) {
@@ -241,7 +230,8 @@ void Profile::loadFile() {
             this->_transList.back().id = idNumberCounter;
         }
         for (auto i = this->_transList.begin(); i != this->_transList.end(); i++) {
-            this->_balance[(*i).tenderType] += (*i).amount;
+            // Calculate balances
+            this->_balance[(*i).walletType] += (*i).amount;
         }
     }
 }
@@ -260,7 +250,7 @@ struct Globals::Transaction Profile::convertEntryToTransaction(std::string entry
 
     t.description = vectorOfSubstrings[0];
     t.attribute = std::stoi(vectorOfSubstrings[1]);
-    t.tenderType = std::stoi(vectorOfSubstrings[2]);
+    t.walletType = std::stoi(vectorOfSubstrings[2]);
     t.transactionTimestamp = std::stoi(vectorOfSubstrings[3]);
     t.amount = std::stof(vectorOfSubstrings[4]);
     return t;
